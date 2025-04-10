@@ -1,0 +1,30 @@
+{
+    "questions": [
+        {
+            "question": "What is the capital of France?",
+            "type": "professional",
+            "human_answer": {
+                "content": "Paris",
+                "evaluation": {
+                    "correctness": 0,
+                    "completeness": 0,
+                    "relevance": 0,
+                    "clarity_and_fluency": 0,
+                    "alignment_with_intent": 0
+                }
+            },
+            "rag_answer": 
+                "content": "Paris",
+                "evaluation": {
+                    "correctness": 0,
+                    "completeness": 0,
+                    "relevance": 0,
+                    "clarity_and_fluency": 0,
+                    "alignment_with_intent": 0
+                }
+            }
+
+        }
+    ]
+    
+}

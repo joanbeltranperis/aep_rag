@@ -1,19 +1,22 @@
 from typing import Any
-from langchain_google_genai import ChatGoogleGenerativeAI
+import os
 from langchain_huggingface.embeddings import HuggingFaceEmbeddings
+import google.generativeai as genai
 from pprint import pprint
+
+os.environ["GOOGLE_API_KEY"] = "AIzaSyCIfd-QrhcRqrsTE1CosgAftdt_6Kskvm8"
+genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
 
 
 class RagConfig:
     def __init__(self):
         self.total_chapters = 53
         self.base_url = r"https://vacunasaep.org/documentos/manual/cap-{chapter_number}"
-        self.generative_model = ChatGoogleGenerativeAI(model="gemini-2.0-flash-lite")
+        self.generative_model = genai.GenerativeModel("gemini-2.0-flash-lite")
         self.embedding_model = HuggingFaceEmbeddings(
             model_name="PlanTL-GOB-ES/roberta-base-biomedical-clinical-es"
         )
-        self.top_k = 10
-        self.debug = True
+        self.top_k = 20
 
 
 # ANSI escape codes for colors
