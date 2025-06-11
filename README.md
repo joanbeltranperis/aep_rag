@@ -5,8 +5,8 @@ A clean, configurable RAG system for immunization manual Q&A with easy component
 ## 🎯 Key Features
 
 - **Simple Configuration**: One config class, easy to modify
+- **Two Setup Options**: Full features or basic/fast mode
 - **Component Toggles**: Enable/disable reranker, evaluation, debug logging
-- **Quick Setups**: Pre-configured modes for speed, quality, or debugging
 - **Modern Python**: Uses `|` unions and `dict[]`/`list[]` syntax
 - **Real-time Changes**: Toggle components at runtime
 
@@ -28,23 +28,57 @@ pipeline = RAGPipeline(config)
 result = pipeline.process_question(question, documents, vector_store)
 ```
 
-### Quick Setups
+### Two Simple Setup Options
 ```python
 config = RagConfig()
 
-# Choose one:
-config.quick_setup_for_speed()      # Fast answers, no reranking
-config.quick_setup_for_quality()    # Best quality, with reranking  
-config.quick_setup_for_debug()      # Full debugging and evaluation
+# Option 1: Enable all features
+config.enable_all()         # Everything: reranker, evaluation, debug, etc.
+
+# Option 2: Basic setup for speed  
+config.basic_setup()        # Minimal: no reranker, no evaluation, faster
 ```
 
 ## ⚙️ Simple Configuration
 
-### Main Components (Enable/Disable)
+### Default Configuration
+When you create `RagConfig()`, you get:
+```python
+config = RagConfig()
+# ✅ Chapter filtering: enabled
+# ✅ Reranker: enabled  
+# ❌ Evaluation: disabled
+# ❌ Debug: disabled
+# Retrieval: 40 docs → 15 reranked
+```
+
+### Two Setup Methods
+
+#### `config.enable_all()` - Full Features
+```python
+config = RagConfig()
+config.enable_all()
+# ✅ All features enabled
+# ✅ Evaluation and debug logging
+# ✅ Save results to file
+# Retrieval: 40 docs → 15 reranked
+```
+
+#### `config.basic_setup()` - Fast/Minimal
+```python
+config = RagConfig()
+config.basic_setup()
+# ❌ No chapter filtering
+# ❌ No reranker
+# ❌ No evaluation or debug
+# Retrieval: 20 docs (no reranking)
+```
+
+### Manual Configuration
 ```python
 config = RagConfig()
 
-# Pipeline components
+# Pick exactly what you need:
 config.use_chapter_filtering = True   # LLM filters relevant chapters first
 config.use_reranker = True           # Apply reranking to retrieved docs
 config.enable_evaluation = False     # Evaluate generated answers
@@ -77,7 +111,7 @@ config.print_status()               # Print current configuration
 
 ## 📋 Usage Examples
 
-### Example 1: Basic Setup
+### Example 1: Default Setup
 ```python
 from config import RagConfig
 from pipeline import RAGPipeline
@@ -85,33 +119,42 @@ from pipeline import RAGPipeline
 config = RagConfig()
 # Default: reranker enabled, evaluation disabled
 
-# Modify as needed:
-config.use_reranker = False         # Disable for speed
-config.enable_debug = True          # Enable for debugging
+pipeline = RAGPipeline(config)
+```
+
+### Example 2: Full Features
+```python
+config = RagConfig()
+config.enable_all()  # Enable everything
 
 pipeline = RAGPipeline(config)
 ```
 
-### Example 2: Quick Configurations
+### Example 3: Basic/Fast
 ```python
 config = RagConfig()
+config.basic_setup()  # Minimal for speed
 
-# For speed (no reranking, minimal logging):
-config.quick_setup_for_speed()
-
-# For quality (all quality features enabled):
-config.quick_setup_for_quality()
-
-# For debugging (evaluation + debug logging):
-config.quick_setup_for_debug()
+pipeline = RAGPipeline(config)
 ```
 
-### Example 3: Runtime Changes
+### Example 4: Custom Configuration
 ```python
 config = RagConfig()
 
-# Start with basic setup
-print("Initial configuration:")
+# Pick exactly what you want
+config.use_reranker = False         # Disable for speed
+config.enable_evaluation = True     # But enable evaluation
+config.enable_debug = True         # And debugging
+
+pipeline = RAGPipeline(config)
+```
+
+### Example 5: Runtime Changes
+```python
+config = RagConfig()
+
+# Start with defaults
 config.print_status()
 
 # Change at runtime
@@ -119,20 +162,7 @@ config.toggle_reranker(False)       # Disable reranker
 config.toggle_evaluation(True)      # Enable evaluation
 config.set_retrieval_size(25, 12)   # Adjust sizes
 
-print("After changes:")
 config.print_status()
-```
-
-### Example 4: Custom Models
-```python
-config = RagConfig()
-
-# Change models
-config.llm_model = "gemini-2.0-flash-lite"
-config.embedding_model = "PlanTL-GOB-ES/roberta-base-biomedical-clinical-es"  
-config.reranker_model = "cross-encoder/ms-marco-MiniLM-L-12-v2"
-
-# Models will be reloaded automatically
 ```
 
 ## 🏃 Running the System
@@ -142,22 +172,18 @@ Edit the configuration section in `main.py` (around line 50):
 
 ```python
 # =================================================================
-# 🎛️  EASY CONFIGURATION - Modify these to enable/disable components
+# 🎛️  EASY CONFIGURATION - Choose your setup
 # =================================================================
 
-# Quick setups (uncomment one to use):
-# config.quick_setup_for_speed()      # Fast answers, no reranking
-# config.quick_setup_for_quality()    # Best quality, with reranking  
-# config.quick_setup_for_debug()      # Full debugging and evaluation
+# Choose one setup (uncomment the one you want):
+# config.enable_all()         # Enable all features (reranker, evaluation, debug, etc.)
+# config.basic_setup()        # Basic setup (no reranker, no evaluation, faster)
 
-# Or manually configure components:
+# Or manually configure what you need:
 config.use_reranker = True           # Enable/disable reranking
 config.enable_evaluation = False     # Enable/disable evaluation
 config.enable_debug = False          # Enable/disable debug logging
 config.log_performance = True       # Enable/disable performance metrics
-
-# Adjust retrieval parameters:
-config.set_retrieval_size(30, 15)   # Retrieve 30, rerank to 15
 ```
 
 Then run:
@@ -174,25 +200,21 @@ python examples.py
 
 ### Chapter Filtering (`use_chapter_filtering`)
 - Uses LLM to identify relevant chapters before retrieval
-- Reduces search space for better performance
 - **Enable for**: Better precision, relevant results
 - **Disable for**: Speed, simpler pipeline
 
 ### Reranker (`use_reranker`)  
 - Uses cross-encoder to rerank retrieved documents
-- Significantly improves relevance but adds compute time
 - **Enable for**: Better answer quality
 - **Disable for**: Faster responses
 
 ### Evaluation (`enable_evaluation`)
 - Compares generated answers with human answers
-- Provides detailed scoring and metrics
 - **Enable for**: Testing, model comparison
 - **Disable for**: Production, speed
 
 ### Debug Logging (`enable_debug`)
 - Shows detailed retrieval information
-- Displays document content and metadata
 - **Enable for**: Development, troubleshooting
 - **Disable for**: Clean output, production
 
@@ -220,28 +242,26 @@ Context Length: 8,543 chars
 
 ### Development/Testing
 ```python
-config.quick_setup_for_debug()
-# Enables: evaluation, debug logging, performance metrics
-# Good for: testing changes, debugging issues
+config = RagConfig()
+config.enable_all()
+# Enables: everything for full debugging and evaluation
 ```
 
 ### Production
 ```python
-config.quick_setup_for_quality()
-config.enable_debug = False
-config.log_performance = False
-# Enables: reranker for quality, minimal logging
-# Good for: live applications
+config = RagConfig()
+# Default setup: reranker enabled, no evaluation/debug
+# Good balance of quality and performance
 ```
 
 ### Fast Demo/Prototype
 ```python
-config.quick_setup_for_speed()
-# Disables: reranker, chapter filtering, evaluation
-# Good for: quick demos, resource-constrained environments
+config = RagConfig()
+config.basic_setup()
+# Minimal components for maximum speed
 ```
 
-### Custom Research Setup
+### Custom Research
 ```python
 config = RagConfig()
 config.use_reranker = True
@@ -250,7 +270,6 @@ config.enable_debug = True
 config.log_performance = True
 config.save_results = True
 config.set_retrieval_size(50, 20)  # Larger retrieval
-# Good for: comparing models, research
 ```
 
 ## 📁 File Structure
@@ -267,33 +286,17 @@ config.set_retrieval_size(50, 20)  # Larger retrieval
 └── README.md          # This file
 ```
 
-## 🔄 Migration from Complex Version
+## 📊 Setup Comparison
 
-The new system is much simpler:
-
-**Old (complex):**
-```python
-features = FeatureFlags(use_reranker=True, enable_evaluation=False, ...)
-config = RagConfig(feature_flags=features)
-```
-
-**New (simple):**
-```python
-config = RagConfig()
-config.use_reranker = True
-config.enable_evaluation = False
-```
-
-**Old preset configs:**
-```python
-config = create_preset_configs()['development']
-```
-
-**New quick setups:**
-```python
-config = RagConfig()
-config.quick_setup_for_debug()  # Similar to development mode
-```
+| Component | Default | enable_all() | basic_setup() |
+|-----------|---------|--------------|---------------|
+| Chapter Filtering | ✅ | ✅ | ❌ |
+| Reranker | ✅ | ✅ | ❌ |
+| Evaluation | ❌ | ✅ | ❌ |
+| Debug Logging | ❌ | ✅ | ❌ |
+| Performance Log | ❌ | ✅ | ❌ |
+| Save Results | ❌ | ✅ | ❌ |
+| **Retrieval Size** | 40 → 15 | 40 → 15 | 20 |
 
 ## 🧩 Extending the System
 
@@ -304,26 +307,29 @@ To add new components:
    self.use_new_feature = False
    ```
 
-2. **Add toggle method** (optional):
+2. **Add to setup methods**:
    ```python
-   def toggle_new_feature(self, enabled: bool = None):
-       # Similar to other toggle methods
+   def enable_all(self):
+       # ... existing code ...
+       self.use_new_feature = True
+   
+   def basic_setup(self):
+       # ... existing code ...
+       self.use_new_feature = False
    ```
 
-3. **Use in pipeline modules** - check the config flag:
+3. **Use in pipeline modules**:
    ```python
    if self.config.use_new_feature:
        # Your new feature logic
    ```
 
-4. **Add to quick setups** as needed.
-
 ## 💡 Tips
 
 - **Start simple**: Use default config, modify only what you need
-- **Use quick setups**: `quick_setup_for_*()` methods for common scenarios  
+- **Two main options**: `enable_all()` for full features, `basic_setup()` for speed
 - **Toggle at runtime**: Change configuration without restarting
 - **Monitor performance**: Enable `log_performance` to see bottlenecks
 - **Print status**: Use `config.print_status()` to see current settings
 
-That's it! The system is now much simpler while maintaining all the modular functionality.
+That's it! Clean, simple, and powerful. 🚀
