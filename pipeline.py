@@ -8,12 +8,13 @@ allowing easy activation/deactivation of different components through configurat
 import json
 import time
 from dataclasses import dataclass
+from typing import Any
 
 from langchain.prompts import ChatPromptTemplate
 from langchain_community.vectorstores import FAISS
 from langchain_core.documents import Document
 
-from config import RagConfig, debug_log, GREEN, BLUE, YELLOW, RED, RESET
+from config import BLUE, GREEN, RED, RESET, YELLOW, RagConfig, debug_log
 from templates.prompts import (
     answer_prompt_template,
     evaluation_prompt_template,
@@ -24,6 +25,7 @@ from templates.prompts import (
 @dataclass
 class PipelineMetrics:
     """Store performance metrics for the pipeline."""
+
     total_time: float = 0.0
     retrieval_time: float = 0.0
     reranking_time: float = 0.0
@@ -36,19 +38,23 @@ class PipelineMetrics:
 
 class RetrievalModule:
     """Handles document retrieval with optional chapter filtering."""
-    
+
     def __init__(self, config: RagConfig):
         self.config = config
-    
-    def retrieve_documents(self, question: str, documents: list[Document], vector_store: FAISS) -> tuple[list[Document], float]:
+
+    def retrieve_documents(
+        self, question: str, documents: list[Document], vector_store: FAISS
+    ) -> tuple[list[Document], float]:
         """Retrieve relevant documents based on the question."""
         start_time = time.time()
-        
+
         if self.config.use_chapter_filtering:
             # Use LLM to filter relevant chapters first
             relevant_documents = self._filter_by_chapters(question, documents)
             if relevant_documents:
-                filtered_vector_store = FAISS.from_documents(relevant_documents, self.config.embedding_model_instance)
+                filtered_vector_store = FAISS.from_documents(
+                    relevant_documents, self.config.embedding_model_instance
+                )
                 retrieved_docs = filtered_vector_store.similarity_search(
                     question, k=self.config.top_k_retrieval
                 )
@@ -61,221 +67,248 @@ class RetrievalModule:
             retrieved_docs = vector_store.similarity_search(
                 question, k=self.config.top_k_retrieval
             )
-        
+
         retrieval_time = time.time() - start_time
-        
+
         if self.config.log_stats:
-            print(f"{BLUE}📚 Retrieved {len(retrieved_docs)} documents in {retrieval_time:.2f}s{RESET}")
-        
+            print(
+                f"{BLUE}📚 Retrieved {len(retrieved_docs)} documents in {retrieval_time:.2f}s{RESET}"
+            )
+
         return retrieved_docs, retrieval_time
-    
-    def _filter_by_chapters(self, question: str, documents: list[Document]) -> list[Document] | None:
+
+    def _filter_by_chapters(
+        self, question: str, documents: list[Document]
+    ) -> list[Document] | None:
         """Filter documents by relevant chapters using LLM."""
-        from templates.titles import document_titles
-        
-        retrieval_prompt = ChatPromptTemplate.from_template(initial_retrieval_prompt_template)
-        formatted_prompt = retrieval_prompt.format(
-            document_titles=document_titles,
-            user_question=question,
-        )
-        
-        if self.config.log_stats:
-            print(f"{BLUE}🔍 Filtering relevant chapters...{RESET}")
-        
-        model_response = self.config.generative_model.generate_content(formatted_prompt)
-        relevant_chapter_numbers = self._parse_and_validate_chapter_numbers(model_response.text)
-        
-        if relevant_chapter_numbers is None:
-            if self.config.log_stats:
-                print(f"{YELLOW}⚠️  Chapter filtering failed, using all documents{RESET}")
-            return None
-        
-        filtered_documents = [
-            doc for doc in documents 
-            if doc.metadata["chapter_number"] in relevant_chapter_numbers
-        ]
-        
-        if self.config.log_stats:
-            print(f"{BLUE}📖 Filtered to {len(filtered_documents)} documents from {len(relevant_chapter_numbers)} chapters{RESET}")
-        
-        return filtered_documents
-    
-    def _parse_and_validate_chapter_numbers(self, raw_response: str) -> list[str] | None:
-        """Parse and validate chapter numbers from LLM response."""
-        raw_items = raw_response.strip().replace(" ", "").split(",")
-        
-        if len(raw_items) == 0:
-            return None
-        
         try:
-            chapter_numbers = [int(item) for item in raw_items]
-        except (ValueError, TypeError):
+            from templates.titles import document_titles
+
+            retrieval_prompt = ChatPromptTemplate.from_template(
+                initial_retrieval_prompt_template
+            )
+            formatted_prompt = retrieval_prompt.format(
+                document_titles=document_titles,
+                user_question=question,
+            )
+
+            if self.config.log_stats:
+                print(f"{BLUE}🔍 Filtering relevant chapters...{RESET}")
+
+            response = self.config.generative_model.generate_content(formatted_prompt)
+            chapter_numbers = self._parse_chapter_numbers(response.text)
+
+            if not chapter_numbers:
+                if self.config.log_stats:
+                    print(
+                        f"{YELLOW}⚠️  Chapter filtering failed, using all documents{RESET}"
+                    )
+                return None
+
+            filtered_docs = [
+                doc
+                for doc in documents
+                if doc.metadata.get("chapter_number") in chapter_numbers
+            ]
+
+            if self.config.log_stats:
+                print(
+                    f"{BLUE}📖 Filtered to {len(filtered_docs)} documents from {len(chapter_numbers)} chapters{RESET}"
+                )
+
+            return filtered_docs if filtered_docs else None
+
+        except Exception as e:
+            if self.config.log_stats:
+                print(f"{YELLOW}⚠️  Chapter filtering error: {str(e)}{RESET}")
             return None
-        
-        if not all(1 <= num <= self.config.total_chapters for num in chapter_numbers):
-            return None
-        
-        return raw_items
+
+    def _parse_chapter_numbers(self, response: str) -> set[str]:
+        """Parse and validate chapter numbers from LLM response."""
+        try:
+            items = response.strip().replace(" ", "").split(",")
+            numbers = []
+            
+            for item in items:
+                try:
+                    num = int(item)
+                    if 1 <= num <= self.config.total_chapters:
+                        numbers.append(item)
+                except ValueError:
+                    continue
+            
+            return set(numbers)
+        except Exception:
+            return set()
 
 
 class RerankingModule:
     """Handles document reranking using cross-encoder models."""
-    
+
     def __init__(self, config: RagConfig):
         self.config = config
-    
-    def rerank_documents(self, question: str, documents: list[Document]) -> tuple[list[Document], float]:
+
+    def rerank_documents(
+        self, question: str, documents: list[Document]
+    ) -> tuple[list[Document], float]:
         """Rerank documents based on relevance to the question."""
-        if not self.config.use_reranker or self.config.reranker_model_instance is None:
-            return documents[:self.config.top_k_reranked], 0.0
-        
+        if not self.config.use_reranker or not self.config.reranker_model_instance:
+            return documents[: self.config.top_k_reranked], 0.0
+
         start_time = time.time()
         
-        pairs = [(question, doc.page_content) for doc in documents]
-        scores = self.config.reranker_model_instance.predict(pairs)
-        
-        if self.config.log_stats:
-            print(f"{BLUE}🔄 Reranker scores: {scores[:5]}...{RESET}")
-        
-        reranked = sorted(zip(documents, scores), key=lambda x: x[1], reverse=True)
-        reranked_documents = [doc for doc, _ in reranked[:self.config.top_k_reranked]]
-        
-        reranking_time = time.time() - start_time
-        
-        if self.config.log_stats:
-            print(f"{BLUE}🎯 Reranked to top {len(reranked_documents)} documents in {reranking_time:.2f}s{RESET}")
-        
-        return reranked_documents, reranking_time
+        try:
+            pairs = [(question, doc.page_content) for doc in documents]
+            scores = self.config.reranker_model_instance.predict(pairs)
+
+            # Combine documents with scores and sort by relevance
+            doc_scores = list(zip(documents, scores))
+            doc_scores.sort(key=lambda x: x[1], reverse=True)
+            
+            reranked_docs = [doc for doc, _ in doc_scores[: self.config.top_k_reranked]]
+            reranking_time = time.time() - start_time
+
+            if self.config.log_stats:
+                top_scores = [score for _, score in doc_scores[:5]]
+                print(f"{BLUE}🔄 Top reranker scores: {top_scores}{RESET}")
+                print(f"{BLUE}🎯 Reranked to top {len(reranked_docs)} documents in {reranking_time:.2f}s{RESET}")
+
+            return reranked_docs, reranking_time
+
+        except Exception as e:
+            if self.config.log_stats:
+                print(f"{YELLOW}⚠️  Reranking failed: {str(e)}{RESET}")
+            return documents[: self.config.top_k_reranked], time.time() - start_time
 
 
 class ContextModule:
     """Handles context preparation and filtering for generation."""
-    
+
     def __init__(self, config: RagConfig):
         self.config = config
-    
+
     def prepare_context(self, documents: list[Document]) -> str:
         """Prepare context string from documents."""
         context_parts: list[str] = []
-        total_length = 0
-        
+
         for doc in documents:
             # Prepare document text
             doc_text = f"{doc.metadata}\n{doc.page_content}\n"
-            
-            # Check if adding this document would exceed max context length
-            if total_length + len(doc_text) > self.config.max_context_length:
-                if self.config.log_stats:
-                    print(f"{YELLOW}✂️  Context truncated at {total_length} chars to fit limit{RESET}")
-                break
-            
             context_parts.append(doc_text)
-            total_length += len(doc_text)
-        
+
         context = "".join(context_parts)
-        
+
         if self.config.log_stats:
-            print(f"{BLUE}📝 Prepared context: {len(context)} characters from {len(context_parts)} documents{RESET}")
-        
+            print(
+                f"{BLUE}📝 Prepared context: {len(context):,} characters from {len(documents)} documents{RESET}"
+            )
+
         return context
 
 
 class GenerationModule:
     """Handles answer generation using the LLM."""
-    
+
     def __init__(self, config: RagConfig):
         self.config = config
-    
+
     def generate_answer(self, question: str, context: str) -> tuple[str, float]:
         """Generate answer using the LLM."""
         start_time = time.time()
         
-        answer_prompt = ChatPromptTemplate.from_template(answer_prompt_template)
-        final_prompt = answer_prompt.format(question=question, context=context)
-        
-        if self.config.log_performance:
-            print(f"{BLUE}📊 Prompt length: {len(final_prompt)} characters{RESET}")
-        
-        model_response = self.config.generative_model.generate_content(final_prompt)
-        answer = model_response.text
-        
-        generation_time = time.time() - start_time
-        
-        if self.config.log_performance:
-            print(f"{GREEN}✅ Answer generated in {generation_time:.2f}s{RESET}")
-        
-        return answer, generation_time
+        try:
+            answer_prompt = ChatPromptTemplate.from_template(answer_prompt_template)
+            formatted_prompt = answer_prompt.format(context=context, question=question)
+
+            response = self.config.generative_model.generate_content(formatted_prompt)
+            answer = response.text.strip()
+            generation_time = time.time() - start_time
+
+            if self.config.log_stats:
+                print(f"{BLUE}💬 Generated answer in {generation_time:.2f}s ({len(answer)} chars){RESET}")
+
+            return answer, generation_time
+
+        except Exception as e:
+            generation_time = time.time() - start_time
+            error_answer = f"Error generating answer: {str(e)}"
+            
+            if self.config.log_stats:
+                print(f"{RED}❌ Generation failed: {str(e)}{RESET}")
+            
+            return error_answer, generation_time
 
 
 class EvaluationModule:
     """Handles answer evaluation and validation."""
-    
+
     def __init__(self, config: RagConfig):
         self.config = config
-    
-    def evaluate_answer(self, question: str, human_answer: str, rag_answer: str) -> tuple[dict[str, any], float]:
+
+    def evaluate_answer(
+        self, question: str, human_answer: str, rag_answer: str
+    ) -> tuple[dict[str, Any], float]:
         """Evaluate the generated answer against human answer."""
         if not self.config.enable_evaluation:
             return {}, 0.0
-        
+
         start_time = time.time()
         
-        evaluation_prompt = ChatPromptTemplate.from_template(evaluation_prompt_template)
-        formatted_prompt = evaluation_prompt.format(
-            question=question,
-            human_answer=human_answer,
-            rag_answer=rag_answer,
-        )
-        
-        evaluation_response = self.config.generative_model.generate_content(formatted_prompt)
-        raw_lines = evaluation_response.text.strip().splitlines()
-        
-        cleaned_json_str = self._clean_json_string(raw_lines)
-        
         try:
-            evaluation_result = json.loads(cleaned_json_str)
-        except json.JSONDecodeError as e:
-            print(f"{RED}❌ Failed to parse evaluation JSON: {e}{RESET}")
-            evaluation_result = {"error": "Failed to parse evaluation"}
-        
-        evaluation_time = time.time() - start_time
-        
-        if self.config.log_performance:
-            print(f"{GREEN}📊 Evaluation completed in {evaluation_time:.2f}s{RESET}")
-        
-        return evaluation_result, evaluation_time
-    
-    def _clean_json_string(self, raw_lines: list[str]) -> str:
+            evaluation_prompt = ChatPromptTemplate.from_template(evaluation_prompt_template)
+            formatted_prompt = evaluation_prompt.format(
+                question=question, human_answer=human_answer, rag_answer=rag_answer
+            )
+
+            response = self.config.generative_model.generate_content(formatted_prompt)
+            evaluation_result = self._parse_evaluation(response.text)
+            evaluation_time = time.time() - start_time
+
+            if self.config.log_stats and evaluation_result:
+                accuracy = evaluation_result.get("accuracy_score", "N/A")
+                completeness = evaluation_result.get("completeness_score", "N/A")
+                print(f"{BLUE}📊 Evaluation: Accuracy={accuracy}, Completeness={completeness}{RESET}")
+
+            return evaluation_result, evaluation_time
+
+        except Exception as e:
+            evaluation_time = time.time() - start_time
+            
+            if self.config.log_stats:
+                print(f"{RED}❌ Evaluation failed: {str(e)}{RESET}")
+            
+            return {"error": str(e)}, evaluation_time
+
+    def _parse_evaluation(self, response: str) -> dict[str, Any]:
         """Clean and extract JSON from LLM response."""
-        import re
-        
-        if raw_lines and raw_lines[0].strip().startswith("```"):
-            raw_lines = raw_lines[1:]
-        if raw_lines and raw_lines[-1].strip().startswith("```"):
-            raw_lines = raw_lines[:-1]
-        
-        json_str = "\n".join(raw_lines)
-        json_str = re.sub(r",\s*(\}|\])", r"\1", json_str)
-        
-        brace_stack: list[str] = []
-        start_idx = None
-        for i, char in enumerate(json_str):
-            if char == "{":
-                if start_idx is None:
-                    start_idx = i
-                brace_stack.append("{")
-            elif char == "}":
-                if brace_stack:
-                    brace_stack.pop()
-                    if not brace_stack:
-                        return json_str[start_idx : i + 1]
-        
-        return json_str
+        try:
+            lines = [line.strip() for line in response.strip().splitlines() if line.strip()]
+            
+            # Find JSON content between lines
+            json_content = []
+            in_json = False
+            
+            for line in lines:
+                if line.startswith("{") or in_json:
+                    in_json = True
+                    json_content.append(line)
+                    if line.endswith("}"):
+                        break
+            
+            if json_content:
+                json_str = " ".join(json_content)
+                return json.loads(json_str)
+            
+            # Fallback: try to parse the entire response as JSON
+            return json.loads(response.strip())
+            
+        except (json.JSONDecodeError, ValueError) as e:
+            return {"parse_error": f"Failed to parse evaluation: {str(e)}"}
 
 
 class RAGPipeline:
     """Main RAG pipeline that orchestrates all modules."""
-    
+
     def __init__(self, config: RagConfig):
         self.config = config
         self.retrieval = RetrievalModule(config)
@@ -283,89 +316,118 @@ class RAGPipeline:
         self.context = ContextModule(config)
         self.generation = GenerationModule(config)
         self.evaluation = EvaluationModule(config)
-        
+
         if config.log_performance:
             config.print_status()
-    
-    def process_question(
-        self, 
-        question: str, 
-        documents: list[Document], 
+
+    def process(
+        self,
+        question: str,
+        documents: list[Document],
         vector_store: FAISS,
-        human_answer: str | None = None
-    ) -> dict[str, any]:
+        human_answer: str | None = None,
+    ) -> dict[str, Any]:
         """Process a question through the complete RAG pipeline."""
         start_time = time.time()
         metrics = PipelineMetrics()
-        
+
         # Step 1: Retrieve documents
-        retrieved_docs, retrieval_time = self.retrieval.retrieve_documents(question, documents, vector_store)
+        retrieved_docs, retrieval_time = self.retrieval.retrieve_documents(
+            question, documents, vector_store
+        )
         metrics.retrieval_time = retrieval_time
         metrics.documents_retrieved = len(retrieved_docs)
-        
+
         # Step 2: Rerank documents (optional)
-        reranked_docs, reranking_time = self.reranking.rerank_documents(question, retrieved_docs)
+        reranked_docs, reranking_time = self.reranking.rerank_documents(
+            question, retrieved_docs
+        )
         metrics.reranking_time = reranking_time
         metrics.documents_reranked = len(reranked_docs)
-        
+
         # Step 3: Prepare context
         context = self.context.prepare_context(reranked_docs)
         metrics.context_length = len(context)
-        
+
         # Step 4: Generate answer
         answer, generation_time = self.generation.generate_answer(question, context)
         metrics.generation_time = generation_time
-        
+
         # Step 5: Evaluate answer (optional)
-        evaluation_result: dict[str, any] = {}
+        evaluation_result: dict[str, Any] = {}
         evaluation_time = 0.0
         if human_answer and self.config.enable_evaluation:
             evaluation_result, evaluation_time = self.evaluation.evaluate_answer(
                 question, human_answer, answer
             )
             metrics.evaluation_time = evaluation_time
-        
+
         # Calculate total time
         metrics.total_time = time.time() - start_time
-        
+
         # Prepare debug data
-        debug_data: dict[str, any] = {
+        debug_data: dict[str, Any] = {
             "question": question,
             "retrieved_docs": retrieved_docs,
             "reranked_docs": reranked_docs,
             "rag_answer": answer,
             "metrics": metrics,
         }
-        
+
         if evaluation_result:
             debug_data["evaluation"] = evaluation_result
-        
-        # Log debug information
-        debug_log(debug_data, self.config)
-        
-        # Log performance metrics
-        if self.config.log_performance:
-            self._log_performance_metrics(metrics)
-        
+
+        # Always show question and answer (regardless of debug settings)
+        print(f"\n{GREEN}Question:{RESET} {question}")
+        print(f"{GREEN}Answer:{RESET} {answer}")
+        print(f"Answer length: {len(answer)} characters")
+
+        # Show debug information only if debug is enabled
+        if self.config.debug_mode:
+            debug_log(debug_data)
+
+        # Show performance stats if enabled
+        if self.config.log_stats:
+            self._print_performance_stats(metrics)
+
         return {
+            "question": question,
             "answer": answer,
+            "total_time": metrics.total_time,
+            "retrieval_time": metrics.retrieval_time,
+            "reranking_time": metrics.reranking_time,
+            "generation_time": metrics.generation_time,
+            "evaluation_time": metrics.evaluation_time,
+            "documents_retrieved": metrics.documents_retrieved,
+            "documents_reranked": metrics.documents_reranked,
+            "context_length": metrics.context_length,
             "evaluation": evaluation_result,
-            "metrics": metrics,
             "retrieved_documents": retrieved_docs,
             "reranked_documents": reranked_docs,
-            "context": context
+            "context": context,
         }
-    
-    def _log_performance_metrics(self, metrics: PipelineMetrics):
-        """Log detailed performance metrics."""
+
+    def _print_performance_stats(self, metrics: PipelineMetrics):
+        """Print detailed performance metrics."""
         print(f"\n{GREEN}⚡ Performance Metrics{RESET}")
         print(f"{GREEN}" + "=" * 40 + f"{RESET}")
         print(f"Total Time: {metrics.total_time:.2f}s")
-        print(f"├─ Retrieval: {metrics.retrieval_time:.2f}s ({metrics.retrieval_time/metrics.total_time*100:.1f}%)")
+        print(
+            f"├─ Retrieval: {metrics.retrieval_time:.2f}s ({metrics.retrieval_time / metrics.total_time * 100:.1f}%)"
+        )
         if metrics.reranking_time > 0:
-            print(f"├─ Reranking: {metrics.reranking_time:.2f}s ({metrics.reranking_time/metrics.total_time*100:.1f}%)")
-        print(f"├─ Generation: {metrics.generation_time:.2f}s ({metrics.generation_time/metrics.total_time*100:.1f}%)")
+            print(
+                f"├─ Reranking: {metrics.reranking_time:.2f}s ({metrics.reranking_time / metrics.total_time * 100:.1f}%)"
+            )
+        print(
+            f"├─ Generation: {metrics.generation_time:.2f}s ({metrics.generation_time / metrics.total_time * 100:.1f}%)"
+        )
         if metrics.evaluation_time > 0:
-            print(f"└─ Evaluation: {metrics.evaluation_time:.2f}s ({metrics.evaluation_time/metrics.total_time*100:.1f}%)")
-        print(f"\nDocuments: {metrics.documents_retrieved} → {metrics.documents_reranked}")
-        print(f"Context Length: {metrics.context_length:,} chars") 
+            print(
+                f"└─ Evaluation: {metrics.evaluation_time:.2f}s ({metrics.evaluation_time / metrics.total_time * 100:.1f}%)"
+            )
+        print(
+            f"\nDocuments: {metrics.documents_retrieved} → {metrics.documents_reranked}"
+        )
+        print(f"Context Length: {metrics.context_length:,} chars")
+
