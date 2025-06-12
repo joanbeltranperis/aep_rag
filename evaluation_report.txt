@@ -1,0 +1,13 @@
+RAG EVALUATION SUMMARY REPORT
+==================================================
+
+Total questions:
+  Human: 8
+  RAG: 8
+
+Per-metric:
+  Correctness: Human 4.38±0.52, RAG 4.12±0.83, Δ-0.25
+  Completeness: Human 3.25±1.39, RAG 4.00±1.20, Δ+0.75
+  Relevance: Human 5.00±0.00, RAG 4.75±0.46, Δ-0.25
+  Clarity_And_Fluency: Human 4.75±0.46, RAG 4.12±0.35, Δ-0.62
+  Alignment_With_Intent: Human 4.88±0.35, RAG 4.38±0.92, Δ-0.50

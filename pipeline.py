@@ -98,6 +98,9 @@ class RetrievalModule:
             response = self.config.generative_model.generate_content(formatted_prompt)
             chapter_numbers = self._parse_chapter_numbers(response.text)
 
+            if self.config.log_stats:
+                print(f"{BLUE}🔢 Chapters selected by LLM: {sorted(chapter_numbers)}{RESET}")
+
             if not chapter_numbers:
                 if self.config.log_stats:
                     print(
@@ -153,7 +156,7 @@ class RerankingModule:
     ) -> tuple[list[Document], float]:
         """Rerank documents based on relevance to the question."""
         if not self.config.use_reranker or not self.config.reranker_model_instance:
-            return documents[: self.config.top_k_reranked], 0.0
+            return documents, 0.0  # Return ALL documents when reranking is disabled
 
         start_time = time.time()
         
@@ -178,7 +181,7 @@ class RerankingModule:
         except Exception as e:
             if self.config.log_stats:
                 print(f"{YELLOW}⚠️  Reranking failed: {str(e)}{RESET}")
-            return documents[: self.config.top_k_reranked], time.time() - start_time
+            return documents, time.time() - start_time
 
 
 class ContextModule:
@@ -264,11 +267,6 @@ class EvaluationModule:
             evaluation_result = self._parse_evaluation(response.text)
             evaluation_time = time.time() - start_time
 
-            if self.config.log_stats and evaluation_result:
-                accuracy = evaluation_result.get("accuracy_score", "N/A")
-                completeness = evaluation_result.get("completeness_score", "N/A")
-                print(f"{BLUE}📊 Evaluation: Accuracy={accuracy}, Completeness={completeness}{RESET}")
-
             return evaluation_result, evaluation_time
 
         except Exception as e:
@@ -280,29 +278,47 @@ class EvaluationModule:
             return {"error": str(e)}, evaluation_time
 
     def _parse_evaluation(self, response: str) -> dict[str, Any]:
-        """Clean and extract JSON from LLM response."""
         try:
-            lines = [line.strip() for line in response.strip().splitlines() if line.strip()]
+            # Clean the response
+            response = response.strip()
             
-            # Find JSON content between lines
-            json_content = []
-            in_json = False
+            # Remove markdown code fences if present
+            if response.startswith("```json"):
+                response = response[7:]  # Remove ```json
+            if response.startswith("```"):
+                response = response[3:]   # Remove ```
+            if response.endswith("```"):
+                response = response[:-3]  # Remove closing ```
             
-            for line in lines:
-                if line.startswith("{") or in_json:
-                    in_json = True
-                    json_content.append(line)
-                    if line.endswith("}"):
+            response = response.strip()
+            
+            # Try to find and extract complete JSON object
+            start_idx = response.find('{')
+            if start_idx == -1:
+                return {"parse_error": "No JSON object found in response"}
+            
+            # Find the matching closing brace
+            brace_count = 0
+            end_idx = -1
+            
+            for i, char in enumerate(response[start_idx:], start_idx):
+                if char == '{':
+                    brace_count += 1
+                elif char == '}':
+                    brace_count -= 1
+                    if brace_count == 0:
+                        end_idx = i + 1
                         break
             
-            if json_content:
-                json_str = " ".join(json_content)
-                return json.loads(json_str)
+            if end_idx == -1:
+                return {"parse_error": "Incomplete JSON object - missing closing brace"}
             
-            # Fallback: try to parse the entire response as JSON
-            return json.loads(response.strip())
+            json_str = response[start_idx:end_idx]
+            return json.loads(json_str)
             
-        except (json.JSONDecodeError, ValueError) as e:
+        except json.JSONDecodeError as e:
+            return {"parse_error": f"JSON decode failed: {str(e)}"}
+        except Exception as e:
             return {"parse_error": f"Failed to parse evaluation: {str(e)}"}
 
 
@@ -317,8 +333,8 @@ class RAGPipeline:
         self.generation = GenerationModule(config)
         self.evaluation = EvaluationModule(config)
 
-        if config.log_performance:
-            config.print_status()
+        if config.log_stats:
+            print(f"📊 Configuration: {config.get_active_components()}")
 
     def process(
         self,
@@ -356,12 +372,16 @@ class RAGPipeline:
         # Step 5: Evaluate answer (optional)
         evaluation_result: dict[str, Any] = {}
         evaluation_time = 0.0
-        if human_answer and self.config.enable_evaluation:
-            evaluation_result, evaluation_time = self.evaluation.evaluate_answer(
-                question, human_answer, answer
-            )
-            metrics.evaluation_time = evaluation_time
-
+        if self.config.enable_evaluation:
+            if human_answer:
+                evaluation_result, evaluation_time = self.evaluation.evaluate_answer(
+                    question, human_answer, answer
+                )
+                metrics.evaluation_time = evaluation_time
+            else:
+                if self.config.log_stats:
+                    print(f"{YELLOW}⚠️  Evaluation enabled but no human answer provided - skipping evaluation{RESET}")
+        
         # Calculate total time
         metrics.total_time = time.time() - start_time
 

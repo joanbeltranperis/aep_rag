@@ -31,45 +31,17 @@ def load_documents(config: RagConfig) -> Tuple[list[Document], FAISS]:
     return documents, vector_store
 
 
-def save_results(result: dict[str, Any], output_path: Path) -> None:
-    """Save RAG results to a JSON file."""
-    # Create results directory if it doesn't exist
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    
-    # Convert any non-serializable objects to strings
-    serializable_result = {
-        "question": result.get("question", ""),
-        "answer": result.get("answer", ""),
-        "answer_length": len(result.get("answer", "")),
-        "metrics": {
-            "total_time": result.get("total_time", 0),
-            "retrieval_time": result.get("retrieval_time", 0),
-            "reranking_time": result.get("reranking_time", 0),
-            "generation_time": result.get("generation_time", 0),
-            "evaluation_time": result.get("evaluation_time", 0),
-            "documents_retrieved": result.get("documents_retrieved", 0),
-            "documents_reranked": result.get("documents_reranked", 0),
-            "context_length": result.get("context_length", 0),
-        },
-        "evaluation": result.get("evaluation", {}),
-        "timestamp": result.get("timestamp", "")
-    }
-    
-    with open(output_path, 'w', encoding='utf-8') as f:
-        json.dump(serializable_result, f, indent=2, ensure_ascii=False)
-
-
-def save_questions(questions_data: dict[str, Any], filename: str) -> None:
-    with open(filename, 'w', encoding='utf-8') as f:
-        json.dump(questions_data, f, indent=2, ensure_ascii=False)
-
-
 def load_questions(filename: str) -> dict[str, Any]:
     try:
         with open(filename, 'r', encoding='utf-8') as f:
             return json.load(f)
     except FileNotFoundError:
         return {"questions": []}
+
+
+def save_questions(questions_data: dict[str, Any], filename: str) -> None:
+    with open(filename, 'w', encoding='utf-8') as f:
+        json.dump(questions_data, f, indent=2, ensure_ascii=False)
 
 
 def calculate_batch_stats(results: list[dict[str, Any]]) -> dict[str, float]:

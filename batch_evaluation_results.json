@@ -1,0 +1,395 @@
+{
+  "metadata": {
+    "created_at": "2025-06-12T19:02:01.009137",
+    "config": "chapter_filtering+reranker+evaluation enabled",
+    "total_questions": 30,
+    "source_file": "questions.json"
+  },
+  "results": [
+    {
+      "original_index": 268,
+      "question": "Hola, mi pregunta es que ocurre si se administra una vacuna de bexero caducada 3 meses y como se actuaria.",
+      "human_answer": "Es una dosis no válida y tiene que administrar una nueva vacuna en cualquier momento, además de informar a los padres de esta circunstancia.\nUn cordial saludo",
+      "rag_answer": "Si se administra una vacuna caducada, la vacunación no se considerará válida y habrá de repetirse (Capítulo 5, El acto de la inmunización: antes, durante y después,  4.8. Incidencias durante la administración de vacunas).  En el caso de vacunas atenuadas, se deberá esperar al menos cuatro semanas desde la fecha de aplicación de la dosis invalidada para administrar una nueva dosis. Si es una vacuna inactivada, la dosis debe repetirse lo antes posible, sin necesidad de respetar ningún intervalo de tiempo.\n\n\nURLs: https://vacunasaep.org/documentos/manual/cap-5",
+      "evaluation": {
+        "human_evaluation": {
+          "correctness": 4,
+          "completeness": 2,
+          "relevance": 5,
+          "clarity_and_fluency": 5,
+          "alignment_with_intent": 4,
+          "justification": "The human answer is correct in stating the vaccine is invalid and needs replacing.  However, it lacks detail on the type of vaccine and potential waiting periods.  It's clear, concise, and directly addresses the question's intent, albeit incompletely."
+        },
+        "rag_evaluation": {
+          "correctness": 5,
+          "completeness": 5,
+          "relevance": 5,
+          "clarity_and_fluency": 4,
+          "alignment_with_intent": 5,
+          "justification": "The RAG answer is factually accurate, providing crucial information about the difference in handling inactivated vs. attenuated vaccines.  It's complete in addressing the implications of an expired vaccine and provides a relevant source. The clarity could be slightly improved by simplifying the sentence structure."
+        }
+      },
+      "metrics": {
+        "total_time": 14.081035137176514,
+        "retrieval_time": 9.11919903755188,
+        "reranking_time": 0.9890260696411133,
+        "generation_time": 1.7682170867919922,
+        "evaluation_time": 2.201923131942749,
+        "documents_retrieved": 60,
+        "documents_reranked": 30,
+        "context_length": 64596
+      },
+      "processed_at": "2025-06-12T19:02:15.090981"
+    },
+    {
+      "original_index": 125,
+      "question": "Buenas tardes, estando embarazados de 2 semanas, sin saberlo, el ginecólogo nos dijo que teníamos que poner dicha vacuna, triple vírica, y lo hicimos pero no sabiamos que estábamos en estado. Existe riesgo para el feto o la madre? Un saludo y muchas gracias.",
+      "human_answer": "Pueden estar tranquilos.\nNunca se ha observado un perjuicio para el feto o la madre provocado por la vacunación inadvertida con triple vírica durante la gestación.\nLa recomendación de no vacunar durante el embarazo es por precaución, por evitar un riesgo teórico, dado que esta vacuna contiene virus vivos, eso sí, atenuados para que no sean dañinos.\nEn cualquier caso este dato debe constar en la historia clínica de su, deseamos, feliz embarazo.\nUn saludo.",
+      "rag_answer": "Según el capítulo 3, \"Seguridad de las inmunizaciones. Contraindicaciones y precauciones\", el embarazo es una contraindicación temporal para la administración de cualquier vacuna atenuada, vírica o bacteriana.  Sin embargo, los registros demuestran que la administración inadvertida de vacunas como la triple vírica durante el embarazo no ha producido casos de síndrome de rubeola congénita, y que el riesgo es mucho menor que el de la infección natural durante el embarazo.  La administración inadvertida de la vacuna no constituye un motivo para la interrupción del embarazo (Capítulo 3).\n\n\nURLs: https://vacunasaep.org/documentos/manual/cap-3",
+      "evaluation": {
+        "human_evaluation": {
+          "correctness": 4,
+          "completeness": 4,
+          "relevance": 5,
+          "clarity_and_fluency": 5,
+          "alignment_with_intent": 5,
+          "justification": "The answer is mostly correct and reassuring, providing accurate information about the low risk associated with accidental MMR vaccination during early pregnancy.  It's slightly less precise than the RAG answer but very clear and directly addresses the user's concerns. The completeness could be improved by mentioning the potential for mild side effects in the mother."
+        },
+        "rag_evaluation": {
+          "correctness": 5,
+          "completeness": 5,
+          "relevance": 5,
+          "clarity_and_fluency": 4,
+          "alignment_with_intent": 5,
+          "justification": "The RAG answer is factually accurate and provides a more nuanced response by referencing specific chapters and suggesting that while the vaccine is contraindicated, accidental administration poses minimal risk.  It's more complete and cites a source. The clarity could be improved slightly by simplifying the language and removing the chapter references,  making it more accessible to the average user."
+        }
+      },
+      "metrics": {
+        "total_time": 14.969130992889404,
+        "retrieval_time": 9.616592168807983,
+        "reranking_time": 1.0015320777893066,
+        "generation_time": 2.1152431964874268,
+        "evaluation_time": 2.2325522899627686,
+        "documents_retrieved": 60,
+        "documents_reranked": 30,
+        "context_length": 103008
+      },
+      "processed_at": "2025-06-12T19:02:32.070045"
+    },
+    {
+      "original_index": 175,
+      "question": "Me gustaria saber si se puede administrar al mismo tiempo vacuna VPH (Cervarix )junto con Meningitis C y Td, vacunacion a los 14 años",
+      "human_answer": "Sí, se pueden administrar simultaneamente sin ningún problema.\nComité Asesor de Vacunas de la AEP",
+      "rag_answer": "Según el capítulo 5, \"El acto de la inmunización: antes, durante y después\",  se pueden administrar 3 o 4 inyecciones intramusculares (IM) en el mismo acto vacunal, manteniendo una distancia mínima de 2,5 cm entre los puntos de inyección.  Las vacunas pueden administrarse en un orden determinado, dejando para el final las más dolorosas; entre ellas se incluyen la vacuna neumocócica conjugada, la vacuna frente al VPH y las vacunas antimeningocócicas. En niños mayores, pueden usarse ambas regiones deltoideas o los muslos.  En el caso de administrar dos vacunas antimeningocócicas, se recomienda aplicarlas en miembros diferentes (Capítulo 5).\n\nEl capítulo 42, \"Virus del papiloma humano\", indica que la vacuna VPH (Cervarix) es una vacuna inactivada.  El mismo capítulo menciona que las vacunas inactivadas pueden administrarse al mismo tiempo que otras vacunas inactivadas o atenuadas, en lugares anatómicos distintos (Capítulo 42).  No hay información en los fragmentos proporcionados que contradiga la posibilidad de administrar la vacuna VPH junto con las vacunas de la meningitis C y la Td a los 14 años.\n\n\nURLs:\n\n[https://vacunasaep.org/documentos/manual/cap-5]\n[https://vacunasaep.org/documentos/manual/cap-42]",
+      "evaluation": {
+        "human_evaluation": {
+          "correctness": 5,
+          "completeness": 3,
+          "relevance": 5,
+          "clarity_and_fluency": 5,
+          "alignment_with_intent": 5,
+          "justification": "The answer is correct and directly addresses the question.  It's concise and clear. However, it lacks detail regarding the source and doesn't explain the basis for the 'no problem' statement."
+        },
+        "rag_evaluation": {
+          "correctness": 4,
+          "completeness": 4,
+          "relevance": 5,
+          "clarity_and_fluency": 4,
+          "alignment_with_intent": 5,
+          "justification": "The answer provides a detailed and relevant response based on cited chapters from a source.  It's mostly clear, although the structure could be improved for better readability. It acknowledges the lack of contradicting information, which is responsible. The information provided is consistent with common vaccination practices, but not explicitly states a definitive YES or NO."
+        }
+      },
+      "metrics": {
+        "total_time": 13.536389112472534,
+        "retrieval_time": 7.208846092224121,
+        "reranking_time": 0.8349349498748779,
+        "generation_time": 3.4440712928771973,
+        "evaluation_time": 2.047294855117798,
+        "documents_retrieved": 60,
+        "documents_reranked": 30,
+        "context_length": 112256
+      },
+      "processed_at": "2025-06-12T19:02:47.615817"
+    },
+    {
+      "original_index": 410,
+      "question": "Buenas tardes, tengo un paciente de 3 años, ha recibido 1 dosis de vacuna frente a v. Varicela, la madre indica q estuvo en contacto con otro niño con varicela hace 20 días, consulta hoy por lesiónes en miembro superior compatibles con herpes zoster. A este paciente se le administra la 2da dosis de la vacuna o queda descartada? Muchas gracias y un saludo",
+      "human_answer": "Depende. Si Ud considera que realmente es un herpes zoster y puede realizar un cultivo de exudado de alguna lesión confirmándolo, no sería necesario administrar ninguna dosis más de vacuna. El contacto con el sujeto que padece varicela no reactiva el virus en forma de herpes zoster, por lo que le aconsejamos que se asegure del diagnostico.\nUn saludo",
+      "rag_answer": "Según el capítulo 41. Varicela,  el esquema vacunal recomendado para la varicela es de dos dosis.  La primera dosis se administra entre los 12-15 meses de edad, preferiblemente a los 15 meses; la segunda dosis a los 2 años de edad.  El calendario vacunal del CISNS en 2018 incluye una primera dosis a los 15 meses y una segunda a los 3-4 años.  En el caso de un niño de 3 años que ha recibido una dosis y ha estado en contacto con un caso de varicela hace 20 días,  puede administrarse la segunda dosis, aunque no se ha estudiado la efectividad de esta medida en caso de contacto previo con el virus (capítulo 41, Varicela).  Sin embargo, las lesiones compatibles con herpes zoster sugieren una reactivación del virus varicela-zóster y no una infección primaria por varicela, por lo que la administración de la segunda dosis queda a criterio médico.\n\n\nURLs: [https://vacunasaep.org/documentos/manual/cap-41]",
+      "evaluation": {
+        "human_evaluation": {
+          "correctness": 4,
+          "completeness": 3,
+          "relevance": 5,
+          "clarity_and_fluency": 4,
+          "alignment_with_intent": 5,
+          "justification": "The human answer is mostly correct in stating that a second dose might not be necessary if herpes zoster is confirmed. However, it lacks detail regarding the vaccination schedule and doesn't explicitly mention the possibility of administering the second dose. The clarity and fluency are good, and it directly addresses the question's intent."
+        },
+        "rag_evaluation": {
+          "correctness": 4,
+          "completeness": 5,
+          "relevance": 5,
+          "clarity_and_fluency": 4,
+          "alignment_with_intent": 5,
+          "justification": "The RAG answer provides a more complete response, referencing vaccination schedules and acknowledging the uncertainty regarding the effectiveness of a second dose after prior contact. It correctly points out that herpes zoster suggests a reactivation, not a primary infection.  The clarity is good, although a bit more concise phrasing might improve it. It fully addresses the question's intent."
+        }
+      },
+      "metrics": {
+        "total_time": 12.04482626914978,
+        "retrieval_time": 6.23580002784729,
+        "reranking_time": 0.8962576389312744,
+        "generation_time": 2.670560836791992,
+        "evaluation_time": 2.2405171394348145,
+        "documents_retrieved": 60,
+        "documents_reranked": 30,
+        "context_length": 103412
+      },
+      "processed_at": "2025-06-12T19:03:01.671103"
+    },
+    {
+      "original_index": 436,
+      "question": "Tras administrar las vacunas de los 4 meses (Infanrix Hexa y meningitec, en cara anterolateral de ambos muslos), de forma inmediata el bebé presentó llanto intenso y en un par de minutos , en la pierna en que administré la Infanrix Hexa, edema intenso hasta el pie y petequias , limitado todo a la pierna, sin espasmo bronquial ni otra sintomatología.Con la administración de frio local en toda la pierna bajó la inflamación, persistiendo las petequias. La madre recordó después que tras la primera dosis a los 2 meses también había tenido manchas en una pierna, escasas, que atribuyó a una reacción vacunal dentro de lo normal. Aun-que en ficha técnica se describe el edema intenso de miembros y la posibilidad de cardenales, ¿se debe administrar la 3ª dosis a los 6 meses y la Pentavalente de los 18 meses? ¿Es posible que sea una reacción alérgica cada vez más intensa ante dosis sucesivas?En todo caso, ¿se debería adoptar alguna medida preventiva si se administran las dosis siguientes o hacerlo en medio hospitalario? Un saludo y ,como siempre, muchas gracias por estar ahí ayudándonos en nuestra práctica diaria.",
+      "human_answer": "La reacción que comenta parace más bien relacionada con la administración que con la vacuna en sí, aunque el antecedente de pasar lo mismo en otra ocasión produce confusión. De cualquier forma, no se trata de una reacción anafiláctica puesto que no hay reacción sistémica. Quizás el principio de prudencia aconsejaría hacer la próxima vacunación bajo una mayor supervisión.\nComité Asesor de Vacunas de la AEP.",
+      "rag_answer": "La información proporcionada no permite responder si se debe administrar la tercera dosis de Infanrix Hexa a los 6 meses y la Pentavalente a los 18 meses, ni si la reacción observada es una reacción alérgica cada vez más intensa.  Tampoco se puede determinar si se deben adoptar medidas preventivas específicas para la administración de las siguientes dosis o si debe realizarse en un medio hospitalario. Los fragmentos del Manual de Inmunizaciones de la AEP no describen este caso clínico específico ni ofrecen directrices para situaciones similares con las vacunas Infanrix Hexa y Meningitec.\n\nURLs de los capítulos relevantes: No hay URLs de capítulos que contengan información directamente relevante a la pregunta del usuario.",
+      "evaluation": {
+        "human_evaluation": {
+          "correctness": 3,
+          "completeness": 2,
+          "relevance": 4,
+          "clarity_and_fluency": 4,
+          "alignment_with_intent": 3,
+          "justification": "The human answer offers a plausible explanation, suggesting the reaction might be related to the injection technique rather than the vaccine itself.  However, it lacks specific recommendations regarding future vaccinations. The answer is well-written and relevant to the query but is not entirely complete. The correctness is moderate because it is an interpretation of the clinical picture, not a definitive diagnosis."
+        },
+        "rag_evaluation": {
+          "correctness": 0,
+          "completeness": 0,
+          "relevance": 0,
+          "clarity_and_fluency": 0,
+          "alignment_with_intent": 0,
+          "justification": "The RAG answer explicitly states it cannot answer the question due to insufficient information.  Therefore, all criteria receive a score of 0."
+        }
+      },
+      "metrics": {
+        "total_time": 13.804711818695068,
+        "retrieval_time": 8.435693979263306,
+        "reranking_time": 1.1765828132629395,
+        "generation_time": 2.169064998626709,
+        "evaluation_time": 2.0176801681518555,
+        "documents_retrieved": 60,
+        "documents_reranked": 30,
+        "context_length": 94616
+      },
+      "processed_at": "2025-06-12T19:03:17.491808"
+    },
+    {
+      "original_index": 189,
+      "question": "Buenos días. Un niño de 14 años bien vacunado, con factores de riesgo de hepatitis B ( internado en centro de menores) tiene que ponerse una dosis de recuerdo por tener serología negativa . Está en tto. con aciclovir desde hace 5 días por un herpes zóster. Creo que se le puede poner la vacuna de recuerdo sin problemas pero ruego me lo confirmen, ya que al ser un tratamiento por un corto periodo de tiempo no sé si es aconsejable esperar a que lo termine.",
+      "human_answer": "Un tratamiento con aciclovir no tiene por qué inteferir con una vacunación frente a la hepatitis B.\nUn saludo",
+      "rag_answer": "La información proporcionada no permite confirmar si se puede administrar la vacuna de recuerdo de la hepatitis B a un niño de 14 años con tratamiento de aciclovir por herpes zóster.  Los fragmentos del manual no abordan la interacción entre el tratamiento con aciclovir a corto plazo y la vacunación contra la hepatitis B.  Para responder a la pregunta, se necesita información adicional que no está presente en los fragmentos proporcionados.\n\n\nNo se incluyen URLs porque la respuesta no se puede obtener de los fragmentos dados.",
+      "evaluation": {
+        "human_evaluation": {
+          "correctness": 4,
+          "completeness": 2,
+          "relevance": 5,
+          "clarity_and_fluency": 5,
+          "alignment_with_intent": 4,
+          "justification": "The human answer is correct in stating that aciclovir treatment doesn't generally interfere with Hepatitis B vaccination. However, it lacks completeness by not addressing other potential factors related to the child's health or the specific vaccination.  The answer is highly relevant, clear, and fluent, and directly addresses the core concern about the interaction between the two. The intent is partially fulfilled as the core concern is addressed, but it would have been better with more comprehensive information."
+        },
+        "rag_evaluation": {
+          "correctness": 0,
+          "completeness": 0,
+          "relevance": 0,
+          "clarity_and_fluency": 0,
+          "alignment_with_intent": 0,
+          "justification": "The RAG answer explicitly states it cannot answer due to lack of information.  Therefore, all criteria receive a score of 0."
+        }
+      },
+      "metrics": {
+        "total_time": 14.531131982803345,
+        "retrieval_time": 9.218204021453857,
+        "reranking_time": 1.2241730690002441,
+        "generation_time": 1.9148049354553223,
+        "evaluation_time": 2.1681132316589355,
+        "documents_retrieved": 60,
+        "documents_reranked": 30,
+        "context_length": 107745
+      },
+      "processed_at": "2025-06-12T19:03:34.034798"
+    },
+    {
+      "original_index": 399,
+      "question": "buenas tarde tengo un paciente con VIH, El cual tiene puestas en 2015 3 dosis de gardasil 4, desearía saber si precisa algun recuerdo de gardasil9 o la pauta completa, muchas gracias",
+      "human_answer": "Lo sentimos, pero esta sección de la web del Comité Asesor de Vacunas de la Asociación Española de Pediatría, a la que usted se ha dirigido, únicamente responde a preguntas relacionadas con las vacunaciones infantiles y del embarazo.\nPara preguntas sobre adultos le recomendamos dirigirse al apartado de consultas de la web de la Asociación Española de Vacunología: http://www.vacunas.org/enviar-consulta/\nUn saludo,\nComité Asesor de Vacunas de la AEP",
+      "rag_answer": "Lo siento, pero no puedo responder a su pregunta con la información proporcionada.  Los fragmentos del Manual de Inmunizaciones de la AEP no contienen información sobre las pautas de recuerdo para Gardasil 4 o la necesidad de una pauta completa de Gardasil 9 en pacientes con VIH que hayan recibido previamente tres dosis de Gardasil 4.",
+      "evaluation": {
+        "human_evaluation": {
+          "correctness": 5,
+          "completeness": 5,
+          "relevance": 5,
+          "clarity_and_fluency": 5,
+          "alignment_with_intent": 5,
+          "justification": "The human answer correctly identifies that it's outside its area of expertise (pediatric and pregnancy vaccinations) and provides a relevant and helpful alternative resource for adult vaccination inquiries.  The response is perfectly clear, fluent, and directly addresses the user's intent."
+        },
+        "rag_evaluation": {
+          "correctness": 5,
+          "completeness": 5,
+          "relevance": 5,
+          "clarity_and_fluency": 5,
+          "alignment_with_intent": 5,
+          "justification": "The RAG answer correctly states it cannot answer the question given the provided data sources.  It clearly explains the reason for its inability to provide an answer and is relevant, complete, and fluent. While it doesn't provide an alternative, its honest admission of limitations is valuable."
+        }
+      },
+      "metrics": {
+        "total_time": 13.121856927871704,
+        "retrieval_time": 8.521000862121582,
+        "reranking_time": 1.189633846282959,
+        "generation_time": 1.3451862335205078,
+        "evaluation_time": 2.059495210647583,
+        "documents_retrieved": 60,
+        "documents_reranked": 30,
+        "context_length": 61845
+      },
+      "processed_at": "2025-06-12T19:03:49.169211"
+    },
+    {
+      "original_index": 15,
+      "question": "Hola, iremos a vivir a Japón durante aproximadamente 6 meses. Mi bebé tendrá de 10 a 16 meses y hasta los 10 meses cumplirá con el calendario de vacunación de catalunya, incluidas la bexero y la rotateq. ¿Qué me recomendáis para las vacunas que le tocarían poner enntre los 10 y los 16 meses si estoy en Japón? ¿Hay alguna vacuna recomendada además de las del calendario de cataluña? Gracias",
+      "human_answer": "Teniendo en cuenta la fecha en que llega a Japón y por las diferencia de calendario existentes entre ambos, así como los preparados usados en uno y otro país le recomendamos:\n\nRecibirá BCG, Hib y TV  a los 12 meses\nRecibirá una tretra-bacteriana (DTPa IPV) a los 18 meses\nRequiere una dosis más de hepatitis B (3ª dosis, la que en Cataluña le correspondería a los 11 m) que puede administrar en cualquier momento antes de partir.\n\nDebe consultar en un centro de Sanidad Exterior (vea este enlace) acerca de la vacunación de encefalitis Japonesa\nNo estaría de más que al retorno revise el calendario de cara a armonizar las vacunas administradas y las que hipotéticamente pudieran quedar pendientes de acuerdo con el calendario de su Comunidad\nReciba un cordial saludo",
+      "rag_answer": "Según el capítulo 13, Inmunizaciones del niño viajero,  se recomienda actualizar el calendario vacunal de rutina antes de viajar.  Si el calendario de vacunación del bebé no está completo, se deben administrar las dosis que faltan antes del viaje, según el calendario acelerado o de rescate de vacunaciones (capítulo 13).  El capítulo 7, Calendarios de inmunización en España, detalla las vacunas incluidas en el calendario español, pero no especifica qué vacunas serían necesarias adicionalmente para un viaje de 6 meses a Japón para un bebé de 10-16 meses que ya ha recibido Bexsero y Rotateq.  El capítulo 8, Calendarios de inmunización en el mundo, menciona que Japón incluye en su calendario la BCG, el sarampión y la rubeola (sin parotiditis), la vacuna del VPH, la vacuna antineumocócica en pauta 3+1 y la varicela con 2 dosis.  Además, debido a la epidemiología de Japón, se vacuna contra la encefalitis japonesa.  Sin embargo,  no se puede determinar con la información proporcionada qué vacunas adicionales se recomiendan específicamente para este caso en particular.\n\n\nURLs: [https://vacunasaep.org/documentos/manual/cap-7], [https://vacunasaep.org/documentos/manual/cap-13], [https://vacunasaep.org/documentos/manual/cap-8]",
+      "evaluation": {
+        "human_evaluation": {
+          "correctness": 4,
+          "completeness": 3,
+          "relevance": 5,
+          "clarity_and_fluency": 5,
+          "alignment_with_intent": 5,
+          "justification": "The human answer provides specific vaccine recommendations, showing a good understanding of the vaccination schedules in both Catalonia and Japan.  While it doesn't exhaustively cover every potential vaccine, it addresses the core question effectively and clearly. The advice to consult a specialist is also very responsible."
+        },
+        "rag_evaluation": {
+          "correctness": 3,
+          "completeness": 2,
+          "relevance": 4,
+          "clarity_and_fluency": 4,
+          "alignment_with_intent": 3,
+          "justification": "The RAG answer correctly points to the need for updating the vaccination schedule and mentions relevant vaccines available in Japan. However, it falls short in providing concrete recommendations.  While it references relevant chapters, it doesn't synthesize the information to offer a definitive answer to the question of what specific additional vaccines are needed. The clarity is good, but it lacks the directness and specific advice of the human answer."
+        }
+      },
+      "metrics": {
+        "total_time": 25.308786153793335,
+        "retrieval_time": 6.292783975601196,
+        "reranking_time": 1.164536714553833,
+        "generation_time": 15.469274997711182,
+        "evaluation_time": 2.3716330528259277,
+        "documents_retrieved": 60,
+        "documents_reranked": 30,
+        "context_length": 143256
+      },
+      "processed_at": "2025-06-12T19:04:16.493387"
+    },
+    {
+      "original_index": 457,
+      "question": "Buenas tardes.  Tenemos un bebé de un año, y nos gustaría saber si alguna de las vacunas administradas en la Comunidad de Madrid contienen mercurio en cualquiera de sus variantes, o cualquier otro metal pesado. Si fuera así, cuáles y en qué grado.  Por otra parte, nos gustaría saber si hay algún problema en que se administre la vacuna triple vírica cuando el niño cumpla 24 meses.  Muchas gracias por su ayuda y enhorabuena por el buen servicio que prestan.",
+      "human_answer": "Ninguna vacuna comercializada en España incluida o no en los calendarios gratuitos de las comunidades autónomas contiene metales pesados o derivados del mercurio por lo que no tiene que tener ninguna precaución con las mismas y les aconsejamos que vacunen a su hijo con las vacunas gratuitas y tambien con las vacunas no incluidas gratuitamente, pero que son recomendadas por este comité para niños sanos como las del neumococo, varicela y rotavirus.\nLa vacuna triple vírica se puede aplicar a partir de los 12 meses de edad, en 2 dosis separadas entre sí por una distancia mínima de 1 mes, así que puede vacunarlo con tranquilidad.\nComité Asesor de Vacunas de la AEP",
+      "rag_answer": "No se puede responder a la pregunta sobre si las vacunas administradas en la Comunidad de Madrid contienen mercurio u otros metales pesados, ni en qué grado, con la información proporcionada.  Los fragmentos del Manual de Inmunizaciones de la AEP no contienen datos específicos sobre la composición de las vacunas administradas en esa comunidad autónoma.\n\nRespecto a la segunda parte de la pregunta, sobre la administración de la vacuna triple vírica a los 24 meses, el capítulo 3 indica que la vacuna triple vírica no se aconseja administrar antes de los 11 meses de vida porque puede interferir con los anticuerpos maternos y no producir una respuesta inmunológica completa.  Sin embargo,  en situaciones epidémicas se puede administrar a partir de los 6 meses, aunque posteriormente deberá recibir dos dosis a partir de los 12 meses.  El capítulo 7 menciona que en el calendario de 2012 la primera dosis de la triple vírica se pauta a los 12 meses y la segunda dosis entre los 3 y 4 años. El capítulo no especifica si hay algún problema en administrarla a los 24 meses, siempre y cuando se haya completado el esquema vacunal según los calendarios.\n\n\nURLs de los capítulos relevantes:\n\n[https://vacunasaep.org/documentos/manual/cap-3]\n[https://vacunasaep.org/documentos/manual/cap-7]",
+      "evaluation": {
+        "human_evaluation": {
+          "correctness": 5,
+          "completeness": 5,
+          "relevance": 5,
+          "clarity_and_fluency": 5,
+          "alignment_with_intent": 5,
+          "justification": "The human answer is completely correct, addresses both parts of the question comprehensively, is clear, fluent, and perfectly aligned with the user's intent. It provides a concise and reassuring response."
+        },
+        "rag_evaluation": {
+          "correctness": 3,
+          "completeness": 3,
+          "relevance": 4,
+          "clarity_and_fluency": 4,
+          "alignment_with_intent": 3,
+          "justification": "The RAG answer partially fulfills the request. While it correctly addresses the second part of the question regarding the triple viral vaccine, it fails to answer the first part about mercury content in vaccines, stating it lacks information. The provided information on the triple viral vaccine, although relevant, is incomplete and somewhat ambiguous.  The clarity and fluency are good, but the incomplete response lowers the overall score."
+        }
+      },
+      "metrics": {
+        "total_time": 30.638489961624146,
+        "retrieval_time": 12.630911827087402,
+        "reranking_time": 1.0603740215301514,
+        "generation_time": 14.794683933258057,
+        "evaluation_time": 2.148585319519043,
+        "documents_retrieved": 60,
+        "documents_reranked": 30,
+        "context_length": 213650
+      },
+      "processed_at": "2025-06-12T19:04:49.146968"
+    },
+    {
+      "original_index": 295,
+      "question": "Buenas tardes, Escribo en relación a una familia recién llegada de Ucrania con 3 niños de 9, 12 y 14 años de edad. La madre refiere que no se les ha administrado ninguna vacuna por antecedente materno y paterno de angioedema de Quincke con la vacunación. ¿Es el angioedema una contraindicación para la vacunación sistemática? ¿Y el hecho de tener antecedentes familiares? Muchas gracias.",
+      "human_answer": "El angioedema paterno o materno no constituye una contraindicación para la vacunación.\nUn saludo",
+      "rag_answer": "No se puede responder a la pregunta con la información proporcionada.  Los fragmentos del \"Manual de Inmunizaciones de la AEP\" no contienen información sobre el angioedema de Quincke como contraindicación para la vacunación sistemática, ni sobre la relevancia de los antecedentes familiares en este caso.",
+      "evaluation": {
+        "human_evaluation": {
+          "correctness": 4,
+          "completeness": 2,
+          "relevance": 5,
+          "clarity_and_fluency": 5,
+          "alignment_with_intent": 4,
+          "justification": "The human answer is correct in stating that parental angioedema is not a contraindication for vaccination. However, it lacks completeness as it doesn't address the question regarding familial history and only provides a very concise answer.  It is highly relevant, clear, fluent, and mostly aligns with the intent by directly answering the main question."
+        },
+        "rag_evaluation": {
+          "correctness": 0,
+          "completeness": 0,
+          "relevance": 0,
+          "clarity_and_fluency": 0,
+          "alignment_with_intent": 0,
+          "justification": "The RAG answer explicitly states it cannot answer the question due to lack of information.  Therefore, all criteria receive a score of 0."
+        }
+      },
+      "metrics": {
+        "total_time": 44.63580918312073,
+        "retrieval_time": 11.892387866973877,
+        "reranking_time": 28.728033781051636,
+        "generation_time": 1.8822968006134033,
+        "evaluation_time": 2.0633132457733154,
+        "documents_retrieved": 60,
+        "documents_reranked": 30,
+        "context_length": 107224
+      },
+      "processed_at": "2025-06-12T19:05:35.794945"
+    },
+    {
+      "original_index": 227,
+      "question": "Consulta de vacunación de varicela en niño de 12 años , que en el año 2011 fue diagnosticado de leucemia linfoblástica. Realizado trasplante de progenitores hematopoyéticos y desde 2011 enfermedad en remisión completa y sin tratamiento .Su madre me dice que el niño pasó la varicela posteriormente . Sería necesaria la vacunación de varicela en este caso ? Muchas gracias",
+      "human_answer": "Pues sería recomendable vacunarlo pues tras el trasplante se compromete la memoria inmune tanto la que procede de la enfermedad salvaje como la de la vacunación; ello es también extensible a la TV.\nUn saludo",
+      "rag_answer": "Según el capítulo 14,  \"Inmunizaciones en niños inmunodeprimidos o con tratamiento inmunosupresor\",  la vacunación contra la varicela requiere dos dosis.  En pacientes que necesitan adquirir inmunidad lo antes posible,  la segunda dosis puede adelantarse a un mes de la primera (capítulo 14).  El mismo capítulo indica que los contactos de pacientes inmunodeprimidos mayores de 12 meses deben ser vacunados si son susceptibles a la enfermedad.  Sin embargo, el capítulo 14 también señala que la vacunación contra la varicela está contraindicada en algunos pacientes, y recomienda consultar el apartado de recomendaciones específicas según el tipo de inmunodepresión (capítulo 14).  El  capítulo 17,  \"Inmunizaciones en niños con enfermedades crónicas\",  menciona que entre los pacientes con riesgo elevado de padecer formas graves de varicela se incluyen los niños inmunodeprimidos (capítulo 17).  En niños susceptibles con patología crónica no vacunados, se recomienda la vacunación con dos dosis sin esperar a los 12 años (capítulo 17).  Dado que el niño tuvo leucemia y un trasplante,  y está en remisión completa sin tratamiento, se necesita más información para determinar si está contraindicada la vacunación.  La información proporcionada no es suficiente para determinar si la vacunación es necesaria en este caso específico.\n\nURLs: https://vacunasaep.org/documentos/manual/cap-14, https://vacunasaep.org/documentos/manual/cap-17",
+      "evaluation": {
+        "human_evaluation": {
+          "correctness": 4,
+          "completeness": 1,
+          "relevance": 5,
+          "clarity_and_fluency": 4,
+          "alignment_with_intent": 5,
+          "justification": "The human answer is correct in that it recommends vaccination due to compromised immune memory post-transplant. However, it lacks detail and completeness.  The language is clear and directly addresses the question's intent."
+        },
+        "rag_evaluation": {
+          "correctness": 4,
+          "completeness": 3,
+          "relevance": 5,
+          "clarity_and_fluency": 4,
+          "alignment_with_intent": 4,
+          "justification": "The RAG answer correctly cites relevant guidelines regarding varicella vaccination in immunocompromised individuals. It provides more detail than the human answer but ultimately concludes it needs more information, which is a responsible answer given the complexity of the case. The clarity is good, although the repeated mention of 'chapter 14' could be improved.  It directly addresses the intent but stops short of a definitive answer."
+        }
+      },
+      "metrics": {
+        "total_time": 124.02927494049072,
+        "retrieval_time": 94.47246313095093,
+        "reranking_time": 23.474365949630737,
+        "generation_time": 3.6233532428741455,
+        "evaluation_time": 2.4317119121551514,
+        "documents_retrieved": 60,
+        "documents_reranked": 30,
+        "context_length": 88209
+      },
+      "processed_at": "2025-06-12T19:07:41.859782"
+    }
+  ]
+}
