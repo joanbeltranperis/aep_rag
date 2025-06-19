@@ -14,148 +14,175 @@ python evaluation_statistics.py --file custom_results.json --threshold 3.0
 
 import argparse
 import json
-
-# Ignore harmless warnings (e.g. scipy RuntimeWarnings for small samples)
-import warnings
+import statistics
 from pathlib import Path
+from typing import Dict, List, Any, Optional, Tuple
 from statistics import mean, stdev
-from typing import Dict, List, Optional
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
 from scipy.stats import mannwhitneyu, normaltest, ttest_rel
-
-warnings.filterwarnings("ignore", category=RuntimeWarning)
+from termcolor import colored
 
 
 class EvaluationStatistics:
-    """Compute statistics and visualisations for batch evaluation results."""
+    """
+    Analyzes and visualizes evaluation results from batch evaluation runs.
+    """
 
-    def __init__(
-        self,
-        json_file: str = "batch_evaluation_results.json",
-        rag_threshold: Optional[float] = None,
-    ) -> None:
-        """Create a new evaluator.
-
-        Parameters
-        ----------
-        json_file : str
-            Path to the JSON produced by the batch evaluation pipeline.
-        rag_threshold : float | None
-            If provided, skip any question whose average **RAG** score
-            (mean of the 5 metrics) is **strictly lower** than this value.
-        """
-        self.json_file = Path(json_file)
-        self.rag_threshold = rag_threshold
-
-        self.metrics: List[str] = [
-            "correctness",
-            "completeness",
+    def __init__(self, results_file: str = "batch_evaluation_results.json"):
+        self.results_file = results_file
+        self.data = self._load_data()
+        self.df = self._create_dataframe()
+        self.metrics = [
             "relevance",
-            "clarity_and_fluency",
-            "alignment_with_intent",
+            "completeness",
+            "correctness",
+            "clarity",
+            "usefulness",
         ]
 
-        self.data: Dict = {}
-        self.df: pd.DataFrame = pd.DataFrame()
-
-        # Configure default plotting style
+    def _load_data(self) -> Dict[str, Any]:
+        """Load and parse the evaluation results."""
         try:
-            plt.style.use("seaborn-v0_8")
-        except OSError:
-            plt.style.use("default")
-        sns.set_palette("husl")
+            with open(self.results_file, "r", encoding="utf-8") as f:
+                raw_data = json.load(f)
 
-    # ------------------------------------------------------------------ #
-    # Loading & preprocessing
-    # ------------------------------------------------------------------ #
-    def load_and_process_data(self) -> None:
-        """Read the evaluation JSON and turn it into a tidy DataFrame."""
-        if not self.json_file.exists():
-            raise FileNotFoundError(f"Evaluation file '{self.json_file}' not found")
+            # Initialize data structure
+            data = {
+                "metadata": raw_data.get("metadata", {}),
+                "human": {metric: [] for metric in ["relevance", "completeness", "correctness", "clarity", "usefulness"]},
+                "rag": {metric: [] for metric in ["relevance", "completeness", "correctness", "clarity", "usefulness"]},
+                "human_overall": [],
+                "rag_overall": [],
+                "human_total_evaluated": 0,
+                "rag_total_evaluated": 0,
+                "questions": [],
+                "raw_results": raw_data.get("results", []),
+            }
 
-        with open(self.json_file, encoding="utf-8") as f:
-            raw_data = json.load(f)
-
-        self.data = self._process_raw_data(raw_data)
-        self.df = pd.DataFrame(self.data["per_question"])
-
-    def _process_raw_data(self, raw_data: dict) -> dict:
-        """Convert raw JSON into structured statistics (with optional filter)."""
-        scores = {
-            "human": {m: [] for m in self.metrics},
-            "rag": {m: [] for m in self.metrics},
-            "human_overall": [],
-            "rag_overall": [],
-            "human_total_evaluated": 0,
-            "rag_total_evaluated": 0,
-            "per_question": [],
-        }
-
-        for result in raw_data.get("results", []):
-            q_entry: Dict = {"id": result.get("original_index")}
-            evaluation = result.get("evaluation", {})
-            if not evaluation:
-                continue
-
-            # Collect metric scores per answer type
-            local_human: Dict[str, float] = {}
-            local_rag: Dict[str, float] = {}
-            human_scores_list: List[float] = []
-            rag_scores_list: List[float] = []
-
-            for answer_key, eval_key in [
-                ("human", "human_evaluation"),
-                ("rag", "rag_evaluation"),
-            ]:
-                eval_data = evaluation.get(eval_key, {})
-                if not eval_data:
+            # Process each result
+            for result in raw_data.get("results", []):
+                if "evaluation" not in result or not result["evaluation"]:
                     continue
 
-                for metric in self.metrics:
-                    score = eval_data.get(metric)
-                    if score is None:
-                        continue
-                    q_entry[f"{answer_key}_{metric}"] = score
-                    if answer_key == "human":
-                        local_human[metric] = score
-                        human_scores_list.append(score)
-                    else:
-                        local_rag[metric] = score
-                        rag_scores_list.append(score)
+                evaluation = result["evaluation"]
+                data["questions"].append(result.get("question", ""))
 
-            # Compute overall means
-            if human_scores_list:
-                q_entry["human_overall"] = mean(human_scores_list)
-            if rag_scores_list:
-                q_entry["rag_overall"] = mean(rag_scores_list)
+                # Extract human evaluation scores
+                if "human_evaluation" in evaluation:
+                    human_eval = evaluation["human_evaluation"]
+                    human_scores = []
+                    for metric in self.metrics:
+                        if metric in human_eval and isinstance(human_eval[metric], (int, float)):
+                            score = human_eval[metric]
+                            data["human"][metric].append(score)
+                            human_scores.append(score)
 
-            # Apply rag threshold filter
-            if (
-                self.rag_threshold is not None
-                and q_entry.get("rag_overall", 0) < self.rag_threshold
-            ):
-                continue
+                    if human_scores:
+                        data["human_overall"].append(mean(human_scores))
+                        data["human_total_evaluated"] += 1
 
-            # Append scores to aggregate
-            for m, v in local_human.items():
-                scores["human"][m].append(v)
-            for m, v in local_rag.items():
-                scores["rag"][m].append(v)
+                # Extract RAG evaluation scores
+                if "rag_evaluation" in evaluation:
+                    rag_eval = evaluation["rag_evaluation"]
+                    rag_scores = []
+                    for metric in self.metrics:
+                        if metric in rag_eval and isinstance(rag_eval[metric], (int, float)):
+                            score = rag_eval[metric]
+                            data["rag"][metric].append(score)
+                            rag_scores.append(score)
 
-            if "human_overall" in q_entry:
-                scores["human_overall"].append(q_entry["human_overall"])
-                scores["human_total_evaluated"] += 1
-            if "rag_overall" in q_entry:
-                scores["rag_overall"].append(q_entry["rag_overall"])
-                scores["rag_total_evaluated"] += 1
+                    if rag_scores:
+                        data["rag_overall"].append(mean(rag_scores))
+                        data["rag_total_evaluated"] += 1
 
-            scores["per_question"].append(q_entry)
+            return data
 
-        return scores
+        except FileNotFoundError:
+            print(colored(f"Results file '{self.results_file}' not found", "red"))
+            return {"metadata": {}, "human": {}, "rag": {}, "questions": [], "raw_results": []}
+        except json.JSONDecodeError:
+            print(colored(f"Invalid JSON in '{self.results_file}'", "red"))
+            return {"metadata": {}, "human": {}, "rag": {}, "questions": [], "raw_results": []}
+        except Exception as e:
+            print(colored(f"Error loading data: {str(e)}", "red"))
+            return {"metadata": {}, "human": {}, "rag": {}, "questions": [], "raw_results": []}
+
+    def _create_dataframe(self) -> pd.DataFrame:
+        """Create a pandas DataFrame from the loaded data."""
+        rows = []
+        for i, question in enumerate(self.data["questions"]):
+            row = {"question": question, "question_id": i}
+
+            # Add human scores
+            for metric in self.metrics:
+                if i < len(self.data["human"][metric]):
+                    row[f"human_{metric}"] = self.data["human"][metric][i]
+
+            # Add RAG scores
+            for metric in self.metrics:
+                if i < len(self.data["rag"][metric]):
+                    row[f"rag_{metric}"] = self.data["rag"][metric][i]
+
+            # Add overall scores
+            if i < len(self.data["human_overall"]):
+                row["human_overall"] = self.data["human_overall"][i]
+            if i < len(self.data["rag_overall"]):
+                row["rag_overall"] = self.data["rag_overall"][i]
+
+            rows.append(row)
+
+        return pd.DataFrame(rows)
+
+    def get_summary_stats(self) -> Dict[str, Any]:
+        """Calculate summary statistics."""
+        stats = {}
+
+        # Overall statistics
+        stats["total_evaluations"] = len(self.data["questions"])
+        stats["human_evaluated"] = self.data["human_total_evaluated"]
+        stats["rag_evaluated"] = self.data["rag_total_evaluated"]
+
+        # Metric-wise statistics
+        stats["metrics"] = {}
+        for metric in self.metrics:
+            human_scores = self.data["human"][metric]
+            rag_scores = self.data["rag"][metric]
+
+            stats["metrics"][metric] = {
+                "human": {
+                    "count": len(human_scores),
+                    "mean": mean(human_scores) if human_scores else None,
+                    "std": stdev(human_scores) if len(human_scores) > 1 else None,
+                    "min": min(human_scores) if human_scores else None,
+                    "max": max(human_scores) if human_scores else None,
+                },
+                "rag": {
+                    "count": len(rag_scores),
+                    "mean": mean(rag_scores) if rag_scores else None,
+                    "std": stdev(rag_scores) if len(rag_scores) > 1 else None,
+                    "min": min(rag_scores) if rag_scores else None,
+                    "max": max(rag_scores) if rag_scores else None,
+                },
+            }
+
+        # Overall score statistics
+        if self.data["human_overall"]:
+            stats["human_overall"] = {
+                "mean": mean(self.data["human_overall"]),
+                "std": stdev(self.data["human_overall"]) if len(self.data["human_overall"]) > 1 else None,
+            }
+
+        if self.data["rag_overall"]:
+            stats["rag_overall"] = {
+                "mean": mean(self.data["rag_overall"]),
+                "std": stdev(self.data["rag_overall"]) if len(self.data["rag_overall"]) > 1 else None,
+            }
+
+        return stats
 
     # ------------------------------------------------------------------ #
     # Summary statistics printing
@@ -165,7 +192,7 @@ class EvaluationStatistics:
         print("RAG EVALUATION SUMMARY STATISTICS")
         print("=" * 60)
 
-        print("📊 Total questions evaluated:")
+        print("Total questions evaluated:")
         print(f"   Human answers: {self.data['human_total_evaluated']}")
         print(f"   RAG answers:   {self.data['rag_total_evaluated']}\n")
 
@@ -175,7 +202,7 @@ class EvaluationStatistics:
         if ho:
             hm = mean(ho)
             hs = stdev(ho) if len(ho) > 1 else 0
-            print("🎯 Overall Average Scores (1–5):")
+            print("Overall Average Scores (1–5):")
             print(f"   Human: {hm:.2f} ± {hs:.2f}")
             if ro:
                 rm = mean(ro)
@@ -185,7 +212,7 @@ class EvaluationStatistics:
                 print(f"   RAG:   {rm:.2f} ± {rs:.2f}")
                 print(f"   Difference: {diff:+.2f} {tag}\n")
 
-        print("📈 Per-Metric Statistics:")
+        print("Per-Metric Statistics:")
         print("-" * 45)
         print(f"{'Metric':<25}{'Human':<12}{'RAG':<12}{'Diff':<8}")
         print("-" * 45)
@@ -210,49 +237,39 @@ class EvaluationStatistics:
     # ------------------------------------------------------------------ #
     # Visualization methods
     # ------------------------------------------------------------------ #
-    def generate_summary_plots(self) -> None:
-        self._create_radar_chart()
-        self._create_mean_comparison_chart()
-        self._create_overall_distribution()
-
-    def generate_detailed_analysis(self) -> None:
-        self._create_boxplots()
-        self._create_difference_analysis()
-        self._create_correlation_analysis()
-        self._perform_statistical_tests()
-        self._create_score_distributions()
-
-    def _create_radar_chart(self):
-        human_means = {
-            m: mean(self.data["human"][m])
+    def create_radar_chart(self) -> None:
+        """Create a radar chart comparing human vs RAG scores across metrics."""
+        human_means = [
+            mean(self.data["human"][m]) if self.data["human"][m] else 0
             for m in self.metrics
-            if self.data["human"][m]
-        }
-        rag_means = {
-            m: mean(self.data["rag"][m]) for m in self.metrics if self.data["rag"][m]
-        }
-        if not human_means or not rag_means:
-            print("⚠️ Insufficient data for radar chart")
+        ]
+        rag_means = [
+            mean(self.data["rag"][m]) if self.data["rag"][m] else 0
+            for m in self.metrics
+        ]
+
+        if not any(human_means) and not any(rag_means):
+            print("Insufficient data for radar chart")
             return
-        labels = np.array(list(human_means.keys()))
-        hv = np.array(list(human_means.values()))
-        rv = np.array([rag_means[m] for m in labels])
-        angles = np.linspace(0, 2 * np.pi, len(labels), endpoint=False).tolist()
-        hv = np.concatenate((hv, [hv[0]]))
-        rv = np.concatenate((rv, [rv[0]]))
-        angles += angles[:1]
-        fig, ax = plt.subplots(subplot_kw=dict(polar=True), figsize=(10, 8))
-        ax.plot(angles, hv, "o-", lw=2, label="Human")
-        ax.fill(angles, hv, alpha=0.25)
-        ax.plot(angles, rv, "o-", lw=2, label="RAG")
-        ax.fill(angles, rv, alpha=0.25)
+
+        angles = np.linspace(0, 2 * np.pi, len(self.metrics), endpoint=False)
+        angles = np.concatenate((angles, [angles[0]]))  # Complete the circle
+        human_means.append(human_means[0])  # Complete the circle
+        rag_means.append(rag_means[0])  # Complete the circle
+
+        fig, ax = plt.subplots(figsize=(8, 8), subplot_kw=dict(projection="polar"))
+        ax.plot(angles, human_means, "o-", linewidth=2, label="Human", color="blue")
+        ax.fill(angles, human_means, alpha=0.25, color="blue")
+        ax.plot(angles, rag_means, "o-", linewidth=2, label="RAG", color="red")
+        ax.fill(angles, rag_means, alpha=0.25, color="red")
+
         ax.set_xticks(angles[:-1])
-        ax.set_xticklabels([l.title() for l in labels])
-        ax.set_yticks([1, 2, 3, 4, 5])
+        ax.set_xticklabels([m.replace("_", " ").title() for m in self.metrics])
         ax.set_ylim(0, 5)
+        ax.set_title("Human vs RAG Evaluation Scores", size=16, fontweight="bold")
+        ax.legend(loc="upper right", bbox_to_anchor=(1.3, 1.0))
         ax.grid(True)
-        plt.title("Performance Comparison: Human vs RAG", pad=20, fontweight="bold")
-        plt.legend(bbox_to_anchor=(1.3, 1.0))
+
         plt.tight_layout()
         plt.show()
 
@@ -264,7 +281,7 @@ class EvaluationStatistics:
         }
         rm = {m: mean(self.data["rag"][m]) for m in self.metrics if self.data["rag"][m]}
         if not hm or not rm:
-            return print("⚠️ Insufficient data for bar chart")
+            return print("Insufficient data for bar chart")
         df = pd.DataFrame({"Human": pd.Series(hm), "RAG": pd.Series(rm)}).fillna(0)
         ax = df.plot(kind="bar", figsize=(12, 6), width=0.8)
         plt.title("Mean Scores Comparison", fontweight="bold")
@@ -280,7 +297,7 @@ class EvaluationStatistics:
     def _create_overall_distribution(self):
         ho, ro = self.data["human_overall"], self.data["rag_overall"]
         if not ho or not ro:
-            return print("⚠️ Insufficient data for distribution")
+            return print("Insufficient data for distribution")
         plt.figure(figsize=(10, 6))
         bins = np.linspace(1, 5, 20)
         plt.hist(ho, bins=bins, alpha=0.7, label="Human", density=True)
@@ -409,26 +426,33 @@ class EvaluationStatistics:
         plt.tight_layout()
         plt.show()
 
-    def save_summary_report(self, filename: str = "evaluation_report.txt") -> None:
-        """Save a text summary report to disk."""
-        with open(filename, "w", encoding="utf-8") as f:
-            f.write("RAG EVALUATION SUMMARY REPORT\n")
-            f.write("=" * 50 + "\n\n")
-            f.write(
-                f"Total questions:\n  Human: {self.data['human_total_evaluated']}\n  RAG: {self.data['rag_total_evaluated']}\n\n"
-            )
-            f.write("Per-metric:\n")
-            for m in self.metrics:
-                hs = self.data["human"][m]
-                rs = self.data["rag"][m]
-                if hs and rs:
-                    hm, hsd = mean(hs), stdev(hs) if len(hs) > 1 else 0
-                    rm, rsd = mean(rs), stdev(rs) if len(rs) > 1 else 0
-                    diff = rm - hm
-                    f.write(
-                        f"  {m.title()}: Human {hm:.2f}±{hsd:.2f}, RAG {rm:.2f}±{rsd:.2f}, Δ{diff:+.2f}\n"
-                    )
-        print(f"📄 Report saved to {filename}")
+    def create_comprehensive_report(self, filename: str = "evaluation_report.html") -> None:
+        """Generate a comprehensive HTML report with all visualizations."""
+        try:
+            self.print_summary_statistics()
+            self.create_radar_chart()
+            self._create_mean_comparison_chart()
+            self._create_overall_distribution()
+            self._create_boxplots()
+            self._create_difference_analysis()
+            self._create_correlation_analysis()
+            self._perform_statistical_tests()
+            self._create_score_distributions()
+            print(f"Report saved to {filename}")
+        except Exception as e:
+            print(colored(f"Error creating report: {str(e)}", "red"))
+
+    def analyze(self):
+        """Run a complete analysis with all available methods."""
+        try:
+            print(colored("Generating detailed analysis...", "blue"))
+            self.print_summary_statistics()
+            self.create_radar_chart()
+            print("Analysis complete!")
+        except KeyboardInterrupt:
+            print(colored("Analysis interrupted by user", "yellow"))
+        except Exception as e:
+            print(colored(f"Unexpected error: {e}", "red"))
 
 
 def main():
@@ -448,20 +472,13 @@ def main():
     )
     args = parser.parse_args()
     try:
-        stats = EvaluationStatistics(json_file=args.file, rag_threshold=2)
-        stats.load_and_process_data()
-        stats.print_summary_statistics()
-        print("\n🎨 Generating summary visualizations...")
-        stats.generate_summary_plots()
-        print("\n📊 Generating detailed analysis...")
-        stats.generate_detailed_analysis()
-        stats.save_summary_report()
-        print("\n✅ Analysis complete!")
+        stats = EvaluationStatistics(results_file=args.file)
+        stats.analyze()
     except FileNotFoundError as e:
-        print(f"❌ {e}")
+        print(colored(f"Error: {e}", "red"))
         print("Run batch evaluation first to generate data.")
     except Exception as e:
-        print(f"❌ Unexpected error: {e}")
+        print(colored(f"Unexpected error: {e}", "red"))
 
 
 if __name__ == "__main__":
