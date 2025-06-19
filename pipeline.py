@@ -316,18 +316,28 @@ class EvaluationModule:
             evaluation_time = time.time() - start_time
 
             try:
-                # Parse JSON response
-                evaluation_result = json.loads(response.text.strip())
+                # Parse JSON response - handle both plain JSON and markdown-formatted JSON
+                response_text = response.text.strip()
+                if response_text.startswith("```json"):
+                    # Remove markdown code block markers
+                    response_text = response_text[7:]  # Remove "```json"
+                    if response_text.endswith("```"):
+                        response_text = response_text[:-3]  # Remove closing "```"
+                    response_text = response_text.strip()
+                
+                evaluation_result = json.loads(response_text)
                 
                 if self.config.debug_mode and self.config.log_stats:
                     print(colored(f"Evaluation completed in {evaluation_time:.2f}s", "blue"))
                 
+                # Store raw response for debug display
+                evaluation_result["_raw_response"] = response.text
                 return evaluation_result, evaluation_time
                 
             except json.JSONDecodeError as e:
                 # Handle JSON parsing error gracefully
                 # Return empty evaluation result but don't crash
-                return {"error": f"JSON parsing failed: {str(e)}"}, evaluation_time
+                return {"error": f"JSON parsing failed: {str(e)}", "raw_response": response.text}, evaluation_time
                 
         except Exception as e:
             # Handle evaluation errors gracefully - don't log here since evaluation module already logs
@@ -419,15 +429,10 @@ class RAGPipeline:
         evaluation_result: dict[str, Any] = {}
         evaluation_time = 0.0
         if self.config.enable_evaluation and human_answer:
-            try:
-                evaluation_result, evaluation_time = self.evaluation.evaluate_answer(
-                    question, human_answer, answer
-                )
-                metrics.evaluation_time = evaluation_time
-            except Exception as e:
-                # Handle evaluation errors gracefully - don't log here since evaluation module already logs
-                evaluation_result = {"error": str(e)}
-                evaluation_time = 0.0
+            evaluation_result, evaluation_time = self.evaluation.evaluate_answer(
+                question, human_answer, answer
+            )
+            metrics.evaluation_time = evaluation_time
         elif self.config.enable_evaluation:
             if self.config.debug_mode:
                 print(colored("Evaluation enabled but no human answer provided", "yellow"))
@@ -460,13 +465,12 @@ class RAGPipeline:
             
             # Show evaluation if enabled and available and successful
             if self.config.enable_evaluation and evaluation_result:
+                print(f"\n{colored('Evaluation:', 'blue')}")
+                print(colored("=" * 40, "blue"))
+                
                 if "error" in evaluation_result:
-                    print(f"\n{colored('Evaluation:', 'blue')}")
-                    print(colored("=" * 40, "blue"))
                     print(colored(f"Evaluation error: {evaluation_result['error']}", "red"))
                 elif "human_evaluation" in evaluation_result and "rag_evaluation" in evaluation_result:
-                    print(f"\n{colored('Evaluation:', 'blue')}")
-                    print(colored("=" * 40, "blue"))
                     self._print_evaluation_results(evaluation_result)
         else:
             # Debug mode: detailed results
@@ -482,13 +486,25 @@ class RAGPipeline:
 
             # Show evaluation results if available and successful
             if evaluation_result:
+                print(f"\n{colored('Evaluation:', 'blue')}")
+                print(colored("=" * 40, "blue"))
+                
                 if "error" in evaluation_result:
-                    print(f"\n{colored('Evaluation:', 'blue')}")
-                    print(colored("=" * 40, "blue"))
                     print(colored(f"Evaluation error: {evaluation_result['error']}", "red"))
+                    # Show raw response for errors in debug mode
+                    if "raw_response" in evaluation_result:
+                        print(colored("\nRaw LLM response:", "cyan"))
+                        print(colored("-" * 40, "cyan"))
+                        print(evaluation_result["raw_response"])
+                        print(colored("-" * 40, "cyan"))
                 elif "human_evaluation" in evaluation_result and "rag_evaluation" in evaluation_result:
-                    print(f"\n{colored('Evaluation:', 'blue')}")
-                    print(colored("=" * 40, "blue"))
+                    # Show raw response for successful evaluations in debug mode
+                    if "_raw_response" in evaluation_result:
+                        print(colored("Raw LLM response:", "cyan"))
+                        print(colored("-" * 40, "cyan"))
+                        print(evaluation_result["_raw_response"])
+                        print(colored("-" * 40, "cyan"))
+                    
                     self._print_evaluation_results(evaluation_result)
 
             # Show performance stats if enabled

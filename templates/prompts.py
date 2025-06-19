@@ -26,7 +26,7 @@ Eres un asistente médico especializado en vacunas. A continuación tienes una s
 
 1. Tu objetivo es responder la pregunta del usuario utilizando únicamente la información contenida en los fragmentos.
 2. Si los fragmentos no contienen suficiente información para responder a la pregunta, indica claramente que no es posible responder con los datos proporcionados.
-3. Cita siempre el capítulo o fragmento que respalde cada afirmación (por ejemplo: “Según el capítulo 28. Hepatitis A, …”).
+3. Cita siempre el capítulo o fragmento que respalde cada afirmación (por ejemplo: "Según el capítulo 28. Hepatitis A, …").
 4. Al final de tu respuesta, incluye solamente las URLs de los capítulos a los que has hecho referencia, utilizando el siguiente formato:
 
 * Capítulo 1. Título del capítulo: [https://vacunasaep.org/documentos/manual/cap-1]
@@ -53,27 +53,31 @@ Evalúa ambas respuestas según los siguientes cinco criterios, asignando una pu
 
 Si **alguna respuesta** afirma explícitamente que no puede responder debido a "sin información", "falta de contexto" o una admisión similar de incapacidad, **debes** asignar **0** en los cinco criterios para esa respuesta.
 
-La salida debe estar en formato JSON, conteniendo un diccionario con dos claves: "human_evaluation" y "rag_evaluation". Cada una de estas claves contendrá, a su vez, un diccionario con las cinco claves: "correctness", "completeness", "relevance", "clarity_and_fluency" y "alignment_with_intent". Cada una de estas claves debe tener un valor de 0 a 5 y una cadena de justificación. Ejemplo de salida esperada:
+La salida debe estar en formato JSON, conteniendo un diccionario con dos claves: "human_evaluation" y "rag_evaluation". Cada una de estas claves contendrá, a su vez, un diccionario con las cinco claves: "correctness", "completeness", "relevance", "clarity_and_fluency" y "alignment_with_intent". Cada una de estas claves debe tener un valor de 0 a 5 y una cadena de justificación. 
 
-{
-  "human_evaluation": {
+IMPORTANTE: Devuelve únicamente el JSON en texto plano, sin marcado de código, sin bloques de código y sin formato markdown. Solo el JSON directamente.
+
+Ejemplo de salida esperada:
+
+{{
+  "human_evaluation": {{
     "correctness": X,
     "completeness": X,
     "relevance": X,
     "clarity_and_fluency": X,
     "alignment_with_intent": X,
     "justification": "Explica brevemente la puntuación."
-  },
+  }},
 
-  "rag_evaluation": {
+  "rag_evaluation": {{
     "correctness": X,
     "completeness": X,
     "relevance": X,
     "clarity_and_fluency": X,
     "alignment_with_intent": X,
     "justification": "Explica brevemente la puntuación."
-  }
-}
+  }}
+}}
 
 ### Criterios de evaluación:
 1. Correctness: ¿La información es factualmente precisa?  

@@ -15,7 +15,7 @@ class RagConfig:
     def __init__(self):
         # Core models
         self.embedding_model = "paraphrase-multilingual-MiniLM-L12-v2"
-        self.generative_model_name = "gemini-2.5-flash-preview-05-20"
+        self.generative_model_name = "gemini-2.0-flash-lite"
         self.reranker_model_name = "cross-encoder/ms-marco-MiniLM-L-6-v2"
 
         # File paths
@@ -23,7 +23,7 @@ class RagConfig:
         self.split_vector_store_path = (
             "split_vector_store"  # New path for split documents
         )
-        
+
         # Data source URL (Vaccination Manual from AEP)
         self.base_url = "https://vacunasaep.org/documentos/manual/cap-{chapter_number}"
 
@@ -59,13 +59,13 @@ class RagConfig:
 
         # Initialize generative model client and model
         self._initialize_generative_model()
-        
+
         # Initialize embedding model
         self._initialize_embedding_model()
-        
+
         # Initialize reranker model (always load it, even if disabled)
         self._initialize_reranker_model()
-        
+
         if self.debug_mode:
             print(colored("All models initialized successfully", "green"))
 
@@ -73,19 +73,19 @@ class RagConfig:
         """Initialize generative model client and model."""
         if self.debug_mode:
             print(colored("Initializing generative model client...", "blue"))
-        
+
         api_key = os.getenv("GEMINI_API_KEY")
         if not api_key:
             raise ValueError(
                 "GEMINI_API_KEY environment variable not set. "
                 "Please set it with your Google AI API key."
             )
-        
+
         try:
             self.client = genai.Client(api_key=api_key)
             if self.debug_mode:
                 print(colored("Generative model client initialized", "blue"))
-            
+
             if self.debug_mode:
                 print(colored("Loading generative model...", "blue"))
             self.generative_model = self.client.models.get(
@@ -93,7 +93,7 @@ class RagConfig:
             )
             if self.debug_mode:
                 print(colored("Generative model loaded", "blue"))
-            
+
         except Exception as e:
             print(colored(f"Error initializing generative model: {str(e)}", "red"))
             raise
@@ -101,36 +101,57 @@ class RagConfig:
     def _initialize_embedding_model(self):
         """Initialize embedding model."""
         if self.debug_mode:
-            print(colored(f"Loading embedding model '{self.embedding_model}'...", "blue"))
-            print(colored("(This might take a few minutes on first run as it downloads the model)", "yellow"))
-        
+            print(
+                colored(f"Loading embedding model '{self.embedding_model}'...", "blue")
+            )
+            print(
+                colored(
+                    "(This might take a few minutes on first run as it downloads the model)",
+                    "yellow",
+                )
+            )
+
         try:
             self.embedding_model_instance = HuggingFaceEmbeddings(
                 model_name=self.embedding_model, cache_folder="models"
             )
             if self.debug_mode:
                 print(colored("Embedding model loaded", "blue"))
-            
+
         except Exception as e:
             print(colored(f"Error loading embedding model: {str(e)}", "red"))
             if self.debug_mode:
                 print(colored("Troubleshooting steps:", "yellow"))
                 print(colored("1. Check your internet connection", "yellow"))
                 print(colored("2. Ensure you have enough disk space", "yellow"))
-                print(colored("3. Try removing the 'models' directory if it exists and retry", "yellow"))
-                print(colored("4. If the issue persists, try using a different embedding model", "yellow"))
+                print(
+                    colored(
+                        "3. Try removing the 'models' directory if it exists and retry",
+                        "yellow",
+                    )
+                )
+                print(
+                    colored(
+                        "4. If the issue persists, try using a different embedding model",
+                        "yellow",
+                    )
+                )
             raise
 
     def _initialize_reranker_model(self):
         """Initialize reranker model."""
         if self.debug_mode:
-            print(colored(f"Loading reranker model '{self.reranker_model_name}'...", "blue"))
-        
+            print(
+                colored(
+                    f"Loading reranker model '{self.reranker_model_name}'...", "blue"
+                )
+            )
+
         try:
             self.reranker_model_instance = CrossEncoder(self.reranker_model_name)
             if self.debug_mode:
                 print(colored("Reranker model loaded", "blue"))
-            
+
         except Exception as e:
             print(colored(f"Error loading reranker model: {str(e)}", "red"))
             raise
@@ -196,25 +217,25 @@ class RagConfig:
         """Show model initialization status (called when debug mode is enabled)."""
         print(colored("\nModel Initialization Status", "blue"))
         print(colored("=" * 40, "blue"))
-        
+
         # Generative model status
-        if hasattr(self, 'client') and hasattr(self, 'generative_model'):
+        if hasattr(self, "client") and hasattr(self, "generative_model"):
             print(colored(f"✓ Generative model: {self.generative_model_name}", "green"))
         else:
             print(colored("✗ Generative model: Not initialized", "red"))
-            
+
         # Embedding model status
-        if hasattr(self, 'embedding_model_instance'):
+        if hasattr(self, "embedding_model_instance"):
             print(colored(f"✓ Embedding model: {self.embedding_model}", "green"))
         else:
             print(colored("✗ Embedding model: Not initialized", "red"))
-            
+
         # Reranker model status
-        if hasattr(self, 'reranker_model_instance'):
+        if hasattr(self, "reranker_model_instance"):
             print(colored(f"✓ Reranker model: {self.reranker_model_name}", "green"))
         else:
             print(colored("✗ Reranker model: Not initialized", "red"))
-            
+
         print(colored("All models initialized successfully", "green"))
 
 
@@ -255,25 +276,7 @@ def debug_log(debug_data: dict[str, Any]) -> None:
             print(colored(f"{'-' * 60}", "blue"))
 
     if "evaluation" in debug_data and debug_data["evaluation"]:
-        print(f"\n{colored('Evaluation Results:', 'blue')}")
-        eval_data = debug_data["evaluation"]
-
-        if "human_evaluation" in eval_data:
-            print(f"{colored('Human Answer Scores:', 'green')}")
-            human_eval = eval_data["human_evaluation"]
-            for key, value in human_eval.items():
-                if key != "justification":
-                    print(f"{key.replace('_', ' ').title()}: {value}")
-            if "justification" in human_eval:
-                print(f"Justification: {human_eval['justification']}")
-
-        if "rag_evaluation" in eval_data:
-            print(f"{colored('RAG Answer Scores:', 'green')}")
-            rag_eval = eval_data["rag_evaluation"]
-            for key, value in rag_eval.items():
-                if key != "justification":
-                    print(f"{key.replace('_', ' ').title()}: {value}")
-            if "justification" in rag_eval:
-                print(f"Justification: {rag_eval['justification']}")
+        # Skip evaluation display here as it's already shown in the main pipeline
+        pass
 
     print(colored("\n" + "=" * 80, "yellow"))
