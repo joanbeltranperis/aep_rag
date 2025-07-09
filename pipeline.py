@@ -7,9 +7,8 @@ allowing easy activation/deactivation of different components through configurat
 
 import json
 import time
-import os
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 from langchain.prompts import ChatPromptTemplate
 from langchain_community.vectorstores import FAISS
@@ -22,8 +21,6 @@ from templates.prompts import (
     evaluation_prompt_template,
     initial_retrieval_prompt_template,
 )
-
-import demjson3
 
 
 @dataclass
@@ -52,38 +49,49 @@ class RetrievalModule:
         """Retrieve relevant documents based on the question."""
         start_time = time.time()
 
-        # Get all documents from vector store for potential chapter filtering
         all_docs = list(vector_store.docstore._dict.values())
-        
-        # Step 1a: Optional chapter filtering
+
         filtered_docs = None
         chapter_filter_time = 0.0
-        
+
         if self.config.use_chapter_filtering:
             if self.config.debug_mode and self.config.log_stats:
                 print(colored("Filtering relevant chapters with LLM...", "blue"))
-            
-            filtered_docs, chapter_filter_time = self._filter_by_chapters(question, all_docs)
-            
+
+            filtered_docs, chapter_filter_time = self._filter_by_chapters(
+                question, all_docs
+            )
+
             if filtered_docs:
-                # Create a temporary vector store with filtered documents
-                filtered_vector_store = FAISS.from_documents(filtered_docs, vector_store.embeddings)
+                filtered_vector_store = FAISS.from_documents(
+                    filtered_docs, vector_store.embeddings
+                )
+
                 search_store = filtered_vector_store
                 if self.config.debug_mode and self.config.log_stats:
-                    print(colored(f"Using filtered documents from selected chapters", "blue"))
+                    print(
+                        colored(
+                            "Using filtered documents from selected chapters", "blue"
+                        )
+                    )
+
             else:
                 search_store = vector_store
                 if self.config.debug_mode and self.config.log_stats:
-                    print(colored("Chapter filtering failed, using all documents", "red"))
+                    print(
+                        colored("Chapter filtering failed, using all documents", "red")
+                    )
+
         else:
             search_store = vector_store
             if self.config.debug_mode and self.config.log_stats:
-                print(colored("Chapter filtering disabled, using all documents", "blue"))
+                print(
+                    colored("Chapter filtering disabled, using all documents", "blue")
+                )
 
-        # Step 1b: Vector similarity search
         if self.config.debug_mode and self.config.log_stats:
             print(colored("Performing vector similarity search...", "blue"))
-            
+
         retrieved_docs = search_store.similarity_search(
             question, k=self.config.top_k_retrieval
         )
@@ -91,10 +99,24 @@ class RetrievalModule:
         retrieval_time = time.time() - start_time
 
         if self.config.debug_mode and self.config.log_stats:
-            print(colored(f"Retrieved {len(retrieved_docs)} documents in {retrieval_time:.2f}s", "blue"))
+            print(
+                colored(
+                    f"Retrieved {len(retrieved_docs)} documents in {retrieval_time:.2f}s",
+                    "blue",
+                )
+            )
             if chapter_filter_time > 0:
-                print(colored(f"  - Chapter filtering: {chapter_filter_time:.2f}s", "blue"))
-                print(colored(f"  - Vector search: {retrieval_time - chapter_filter_time:.2f}s", "blue"))
+                print(
+                    colored(
+                        f"  - Chapter filtering: {chapter_filter_time:.2f}s", "blue"
+                    )
+                )
+                print(
+                    colored(
+                        f"  - Vector search: {retrieval_time - chapter_filter_time:.2f}s",
+                        "blue",
+                    )
+                )
 
         return retrieved_docs, retrieval_time
 
@@ -115,24 +137,27 @@ class RetrievalModule:
             )
 
             response = self.config.client.models.generate_content(
-                model=self.config.generative_model_name,
-                contents=formatted_prompt
+                model=self.config.generation_model_name, contents=formatted_prompt
             )
             chapter_numbers = self._parse_chapter_numbers(response.text)
 
             if self.config.debug_mode and self.config.log_stats:
                 if chapter_numbers:
-                    print(colored(f"LLM selected chapters: {', '.join(sorted(chapter_numbers, key=int))}", "blue"))
-                    
-                    # Show chapter titles for the selected numbers
-                    titles_lines = document_titles.strip().split('\n')
+                    print(
+                        colored(
+                            f"LLM selected chapters: {', '.join(sorted(chapter_numbers, key=int))}",
+                            "blue",
+                        )
+                    )
+
+                    titles_lines = document_titles.strip().split("\n")
                     selected_titles = []
                     for num in sorted(chapter_numbers, key=int):
                         for line in titles_lines:
                             if line.startswith(f"{num}."):
                                 selected_titles.append(line.strip())
                                 break
-                    
+
                     if selected_titles:
                         print(colored("Selected chapter titles:", "blue"))
                         for title in selected_titles:
@@ -142,7 +167,9 @@ class RetrievalModule:
 
             if not chapter_numbers:
                 if self.config.debug_mode and self.config.log_stats:
-                    print(colored("Chapter filtering failed, using all documents", "red"))
+                    print(
+                        colored("Chapter filtering failed, using all documents", "red")
+                    )
                 return None, time.time() - start_time
 
             filtered_docs = [
@@ -152,7 +179,12 @@ class RetrievalModule:
             ]
 
             if self.config.debug_mode and self.config.log_stats:
-                print(colored(f"Filtered from {len(documents)} to {len(filtered_docs)} documents", "blue"))
+                print(
+                    colored(
+                        f"Filtered from {len(documents)} to {len(filtered_docs)} documents",
+                        "blue",
+                    )
+                )
 
             return filtered_docs, time.time() - start_time
 
@@ -166,7 +198,7 @@ class RetrievalModule:
         try:
             items = response.strip().replace(" ", "").split(",")
             numbers = []
-            
+
             for item in items:
                 try:
                     num = int(item)
@@ -174,7 +206,7 @@ class RetrievalModule:
                         numbers.append(item)
                 except ValueError:
                     continue
-            
+
             return set(numbers)
         except Exception:
             return set()
@@ -195,11 +227,9 @@ class RerankingModule:
         pairs = [(question, doc.page_content) for doc in documents]
         scores = self.config.reranker_model_instance.predict(pairs)
 
-        # Sort documents by reranking scores in descending order
         scored_docs = list(zip(documents, scores))
         scored_docs.sort(key=lambda x: x[1], reverse=True)
 
-        # Take top_k_reranked documents
         reranked_docs = [doc for doc, _ in scored_docs[: self.config.top_k_reranked]]
         reranking_time = time.time() - start_time
 
@@ -226,20 +256,8 @@ class ContextModule:
             return ""
 
         context_parts = []
-        for i, doc in enumerate(documents, 1):
-            # Get metadata
-            chapter_title = doc.metadata.get("chapter_title", "Unknown Chapter")
-            heading = doc.metadata.get("heading", "")
-            subheading = doc.metadata.get("subheading", "")
-            
-            # Build header
-            header = f"Fragmento {i}: {chapter_title}"
-            if heading:
-                header += f" - {heading}"
-            if subheading:
-                header += f" - {subheading}"
-            
-            context_parts.append(f"{header}\n{doc.page_content}")
+        for doc in documents:
+            context_parts.append(f"{doc.metadata}\n{doc.page_content}")
 
         return "\n\n".join(context_parts)
 
@@ -259,8 +277,7 @@ class GenerationModule:
             formatted_prompt = prompt.format(context=context, question=question)
 
             response = self.config.client.models.generate_content(
-                model=self.config.generative_model_name,
-                contents=formatted_prompt
+                model=self.config.generation_model_name, contents=formatted_prompt
             )
 
             answer = response.text.strip()
@@ -270,22 +287,17 @@ class GenerationModule:
                 print(colored(f"Generated answer in {generation_time:.2f}s", "blue"))
 
             return answer, generation_time
-            
+
         except Exception as e:
             generation_time = time.time() - start_time
             error_msg = f"Generation failed: {str(e)}"
             if self.config.debug_mode:
                 print(colored(error_msg, "red"))
-            
-            # Return a user-friendly error message
-            if "overloaded" in str(e).lower():
-                return "I apologize, but the AI service is currently overloaded. Please try again in a few moments.", generation_time
-            elif "quota" in str(e).lower() or "limit" in str(e).lower():
-                return "I apologize, but the AI service quota has been exceeded. Please try again later.", generation_time
-            elif "unavailable" in str(e).lower():
-                return "I apologize, but the AI service is temporarily unavailable. Please try again later.", generation_time
-            else:
-                return f"I apologize, but I'm unable to generate an answer at this moment due to a technical issue: {str(e)}", generation_time
+
+            return (
+                f"I apologize, but I'm unable to generate an answer at this moment due to a technical issue: {str(e)}",
+                generation_time,
+            )
 
 
 class EvaluationModule:
@@ -309,38 +321,36 @@ class EvaluationModule:
 
         try:
             response = self.config.client.models.generate_content(
-                model=self.config.generative_model_name,
-                contents=formatted_prompt
+                model=self.config.evaluation_model_name, contents=formatted_prompt
             )
 
             evaluation_time = time.time() - start_time
 
             try:
-                # Parse JSON response - handle both plain JSON and markdown-formatted JSON
                 response_text = response.text.strip()
                 if response_text.startswith("```json"):
-                    # Remove markdown code block markers
-                    response_text = response_text[7:]  # Remove "```json"
+                    response_text = response_text[7:]
                     if response_text.endswith("```"):
-                        response_text = response_text[:-3]  # Remove closing "```"
+                        response_text = response_text[:-3]
                     response_text = response_text.strip()
-                
+
                 evaluation_result = json.loads(response_text)
-                
+
                 if self.config.debug_mode and self.config.log_stats:
-                    print(colored(f"Evaluation completed in {evaluation_time:.2f}s", "blue"))
-                
-                # Store raw response for debug display
-                evaluation_result["_raw_response"] = response.text
+                    print(
+                        colored(
+                            f"Evaluation completed in {evaluation_time:.2f}s", "blue"
+                        )
+                    )
+
                 return evaluation_result, evaluation_time
-                
+
             except json.JSONDecodeError as e:
-                # Handle JSON parsing error gracefully
-                # Return empty evaluation result but don't crash
-                return {"error": f"JSON parsing failed: {str(e)}", "raw_response": response.text}, evaluation_time
-                
+                return {
+                    "error": f"JSON parsing failed: {str(e)}",
+                }, evaluation_time
+
         except Exception as e:
-            # Handle evaluation errors gracefully - don't log here since evaluation module already logs
             evaluation_result = {"error": str(e)}
             evaluation_time = 0.0
 
@@ -367,83 +377,95 @@ class RAGPipeline:
     ) -> dict[str, Any]:
         """
         Process a question through the complete RAG pipeline.
-        
+
         Args:
             question: The user question
             documents: All available documents (for reference only)
             vector_store: Pre-created vector store (original or split based on config)
             human_answer: Optional human answer for evaluation
-            
+
         Returns:
             Dictionary containing the answer and metrics
         """
         start_time = time.time()
         metrics = PipelineMetrics()
 
-        # Step 1: Retrieve documents from pre-created vector store
         if self.config.debug_mode:
             print(f"\n{colored('Step 1: Document retrieval', 'blue')}")
-        retrieved_docs, retrieval_time = self.retrieval.retrieve_documents(question, vector_store)
+
+        retrieved_docs, retrieval_time = self.retrieval.retrieve_documents(
+            question, vector_store
+        )
         metrics.retrieval_time = retrieval_time
         metrics.documents_retrieved = len(retrieved_docs)
 
-        # Step 2: Rerank documents (optional)
         if self.config.debug_mode:
             print(f"\n{colored('Step 2: Document reranking', 'blue')}")
+
         if self.config.use_reranker:
-            reranked_docs, reranking_time = self.reranking.rerank_documents(question, retrieved_docs)
+            reranked_docs, reranking_time = self.reranking.rerank_documents(
+                question, retrieved_docs
+            )
         else:
             if self.config.debug_mode:
                 print(colored("Reranking disabled", "yellow"))
-            reranked_docs = retrieved_docs[:self.config.top_k_reranked]
+            reranked_docs = retrieved_docs[: self.config.top_k_reranked]
             reranking_time = 0.0
-            
+
         metrics.reranking_time = reranking_time
         metrics.documents_reranked = len(reranked_docs)
 
-        # Step 3: Prepare context
         if self.config.debug_mode:
             print(f"\n{colored('Step 3: Context preparation', 'blue')}")
+
         context = self.context.prepare_context(reranked_docs)
         metrics.context_length = len(context)
-        if self.config.debug_mode and self.config.log_stats:
-            print(colored(f"Context prepared: {len(context):,} characters from {len(reranked_docs)} documents", "blue"))
 
-        # Step 4: Generate answer
+        if self.config.debug_mode and self.config.log_stats:
+            print(
+                colored(
+                    f"Context prepared: {len(context):,} characters from {len(reranked_docs)} documents",
+                    "blue",
+                )
+            )
+
         if self.config.debug_mode:
             print(f"\n{colored('Step 4: Answer generation', 'blue')}")
-        
+
         try:
             answer, generation_time = self.generation.generate_answer(question, context)
             metrics.generation_time = generation_time
+
         except Exception as e:
-            # Handle generation errors gracefully
             print(colored(f"Answer generation failed: {str(e)}", "red"))
             answer = f"Error: Unable to generate answer due to: {str(e)}"
             generation_time = 0.0
             metrics.generation_time = generation_time
 
-        # Step 5: Evaluate answer (optional)
         if self.config.debug_mode:
             print(f"\n{colored('Step 5: Answer evaluation', 'blue')}")
+
         evaluation_result: dict[str, Any] = {}
         evaluation_time = 0.0
+
         if self.config.enable_evaluation and human_answer:
             evaluation_result, evaluation_time = self.evaluation.evaluate_answer(
                 question, human_answer, answer
             )
             metrics.evaluation_time = evaluation_time
+
         elif self.config.enable_evaluation:
             if self.config.debug_mode:
-                print(colored("Evaluation enabled but no human answer provided", "yellow"))
+                print(
+                    colored("Evaluation enabled but no human answer provided", "yellow")
+                )
+
         else:
             if self.config.debug_mode:
                 print(colored("Evaluation disabled", "yellow"))
-        
-        # Calculate total time
+
         metrics.total_time = time.time() - start_time
 
-        # Prepare debug data
         debug_data: dict[str, Any] = {
             "question": question,
             "retrieved_docs": retrieved_docs,
@@ -456,62 +478,57 @@ class RAGPipeline:
         if evaluation_result:
             debug_data["evaluation"] = evaluation_result
 
-        # Show minimal results in normal mode, detailed in debug mode
         if not self.config.debug_mode:
-            # Normal mode: just essential info
             print(f"\n{colored('Answer:', 'green')}")
             print(colored("=" * 40, "green"))
             print(answer)
-            
-            # Show evaluation if enabled and available and successful
+
             if self.config.enable_evaluation and evaluation_result:
                 print(f"\n{colored('Evaluation:', 'blue')}")
                 print(colored("=" * 40, "blue"))
-                
+
                 if "error" in evaluation_result:
-                    print(colored(f"Evaluation error: {evaluation_result['error']}", "red"))
-                elif "human_evaluation" in evaluation_result and "rag_evaluation" in evaluation_result:
+                    print(
+                        colored(
+                            f"Evaluation error: {evaluation_result['error']}", "red"
+                        )
+                    )
+
+                elif (
+                    "human_evaluation" in evaluation_result
+                    and "rag_evaluation" in evaluation_result
+                ):
                     self._print_evaluation_results(evaluation_result)
+
         else:
-            # Debug mode: detailed results
-            
-            # Show question and answer prominently
             print(f"\n{colored('Question:', 'yellow')}")
             print(colored("=" * 40, "yellow"))
             print(question)
-            
+
             print(f"\n{colored('Answer:', 'green')}")
             print(colored("=" * 40, "green"))
             print(answer)
 
-            # Show evaluation results if available and successful
             if evaluation_result:
                 print(f"\n{colored('Evaluation:', 'blue')}")
                 print(colored("=" * 40, "blue"))
-                
+
                 if "error" in evaluation_result:
-                    print(colored(f"Evaluation error: {evaluation_result['error']}", "red"))
-                    # Show raw response for errors in debug mode
-                    if "raw_response" in evaluation_result:
-                        print(colored("\nRaw LLM response:", "cyan"))
-                        print(colored("-" * 40, "cyan"))
-                        print(evaluation_result["raw_response"])
-                        print(colored("-" * 40, "cyan"))
-                elif "human_evaluation" in evaluation_result and "rag_evaluation" in evaluation_result:
-                    # Show raw response for successful evaluations in debug mode
-                    if "_raw_response" in evaluation_result:
-                        print(colored("Raw LLM response:", "cyan"))
-                        print(colored("-" * 40, "cyan"))
-                        print(evaluation_result["_raw_response"])
-                        print(colored("-" * 40, "cyan"))
-                    
+                    print(
+                        colored(
+                            f"Evaluation error: {evaluation_result['error']}", "red"
+                        )
+                    )
+
+                elif (
+                    "human_evaluation" in evaluation_result
+                    and "rag_evaluation" in evaluation_result
+                ):
                     self._print_evaluation_results(evaluation_result)
 
-            # Show performance stats if enabled
             if self.config.log_stats:
                 self._print_performance_stats(metrics)
 
-            # Show debug information last if enabled
             if self.config.debug_mode:
                 debug_log(debug_data)
 
@@ -538,26 +555,37 @@ class RAGPipeline:
         if "human_evaluation" in evaluation:
             print(f"\n{colored('Human Answer Scores:', 'green')}")
             human_eval = evaluation["human_evaluation"]
+
             for key, value in human_eval.items():
                 if key != "justification":
                     print(f"   {key.replace('_', ' ').title()}: {value}")
+
             if "justification" in human_eval:
                 print(f"   Justification: {human_eval['justification']}")
 
         if "rag_evaluation" in evaluation:
             print(f"\n{colored('RAG Answer Scores:', 'green')}")
             rag_eval = evaluation["rag_evaluation"]
+
             for key, value in rag_eval.items():
                 if key != "justification":
                     print(f"   {key.replace('_', ' ').title()}: {value}")
+
             if "justification" in rag_eval:
                 print(f"   Justification: {rag_eval['justification']}")
 
-        # Calculate averages
         if "human_evaluation" in evaluation and "rag_evaluation" in evaluation:
-            h_scores = [v for k, v in evaluation["human_evaluation"].items() if k != "justification" and isinstance(v, (int, float))]
-            r_scores = [v for k, v in evaluation["rag_evaluation"].items() if k != "justification" and isinstance(v, (int, float))]
-            
+            h_scores = [
+                v
+                for k, v in evaluation["human_evaluation"].items()
+                if k != "justification" and isinstance(v, (int, float))
+            ]
+            r_scores = [
+                v
+                for k, v in evaluation["rag_evaluation"].items()
+                if k != "justification" and isinstance(v, (int, float))
+            ]
+
             if h_scores and r_scores:
                 h_avg = sum(h_scores) / len(h_scores)
                 r_avg = sum(r_scores) / len(r_scores)
@@ -565,7 +593,13 @@ class RAGPipeline:
                 print(f"   Human: {h_avg:.1f}/5")
                 print(f"   RAG: {r_avg:.1f}/5")
                 diff = r_avg - h_avg
-                comparison = "RAG better" if diff > 0 else "Human better" if diff < 0 else "Equal"
+                comparison = (
+                    "RAG better"
+                    if diff > 0
+                    else "Human better"
+                    if diff < 0
+                    else "Equal"
+                )
                 print(f"   Difference: {diff:+.1f} ({comparison})")
 
     def _print_performance_stats(self, metrics: PipelineMetrics):
@@ -573,12 +607,36 @@ class RAGPipeline:
         print(f"\n{colored('Performance Metrics', 'green')}")
         print(colored("=" * 40, "green"))
         print(f"Total Time: {metrics.total_time:.2f}s")
-        print(colored(f"├─ Retrieval: {metrics.retrieval_time:.2f}s ({metrics.retrieval_time / metrics.total_time * 100:.1f}%)", "green"))
+        print(
+            colored(
+                f"├─ Retrieval: {metrics.retrieval_time:.2f}s ({metrics.retrieval_time / metrics.total_time * 100:.1f}%)",
+                "green",
+            )
+        )
         if metrics.reranking_time > 0:
-            print(colored(f"├─ Reranking: {metrics.reranking_time:.2f}s ({metrics.reranking_time / metrics.total_time * 100:.1f}%)", "green"))
-        print(colored(f"├─ Generation: {metrics.generation_time:.2f}s ({metrics.generation_time / metrics.total_time * 100:.1f}%)", "green"))
+            print(
+                colored(
+                    f"├─ Reranking: {metrics.reranking_time:.2f}s ({metrics.reranking_time / metrics.total_time * 100:.1f}%)",
+                    "green",
+                )
+            )
+        print(
+            colored(
+                f"├─ Generation: {metrics.generation_time:.2f}s ({metrics.generation_time / metrics.total_time * 100:.1f}%)",
+                "green",
+            )
+        )
         if metrics.evaluation_time > 0:
-            print(colored(f"└─ Evaluation: {metrics.evaluation_time:.2f}s ({metrics.evaluation_time / metrics.total_time * 100:.1f}%)", "green"))
-        print(colored(f"\nDocuments: {metrics.documents_retrieved} retrieved → {metrics.documents_reranked} reranked", "green"))
+            print(
+                colored(
+                    f"└─ Evaluation: {metrics.evaluation_time:.2f}s ({metrics.evaluation_time / metrics.total_time * 100:.1f}%)",
+                    "green",
+                )
+            )
+        print(
+            colored(
+                f"\nDocuments: {metrics.documents_retrieved} retrieved → {metrics.documents_reranked} reranked",
+                "green",
+            )
+        )
         print(f"Context Length: {metrics.context_length:,} chars")
-

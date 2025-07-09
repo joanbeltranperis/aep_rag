@@ -1,395 +1,522 @@
 {
   "metadata": {
-    "created_at": "2025-06-12T19:02:01.009137",
-    "config": "chapter_filtering+reranker+evaluation enabled",
-    "total_questions": 30,
+    "created_at": "2025-06-20T20:23:45.692401",
+    "config": "original_store+chapter_filtering+reranker+evaluation enabled",
+    "total_questions": 25,
     "source_file": "questions.json"
   },
   "results": [
     {
-      "original_index": 268,
-      "question": "Hola, mi pregunta es que ocurre si se administra una vacuna de bexero caducada 3 meses y como se actuaria.",
-      "human_answer": "Es una dosis no válida y tiene que administrar una nueva vacuna en cualquier momento, además de informar a los padres de esta circunstancia.\nUn cordial saludo",
-      "rag_answer": "Si se administra una vacuna caducada, la vacunación no se considerará válida y habrá de repetirse (Capítulo 5, El acto de la inmunización: antes, durante y después,  4.8. Incidencias durante la administración de vacunas).  En el caso de vacunas atenuadas, se deberá esperar al menos cuatro semanas desde la fecha de aplicación de la dosis invalidada para administrar una nueva dosis. Si es una vacuna inactivada, la dosis debe repetirse lo antes posible, sin necesidad de respetar ningún intervalo de tiempo.\n\n\nURLs: https://vacunasaep.org/documentos/manual/cap-5",
+      "original_index": 360,
+      "question": "Hola. Mi hijo comenzó a vacunarse de prevenar a los 10, casi 11 meses. Me dijeron que solo eran tres dosis por haber comenzado más tarde, pero hace unas semanas, al ir a ponerle la vacuna de los tres años, una de las enfermeras me dijo que faltaba una dosis y la otra que no. Total, que salí muy confundida y este el el motivo de mi consulta. ¿ Necesita mi hijo una dosis más o al haber comenzado a vacunarse más tarde son suficientes las tres que ya tiene ? Y en caso de haber necesitado una más... ¿ es recomendable ponersela ahora con tres años, casi cuatro ?. Muchas gracias",
+      "human_answer": "Si su hijo recibió la 2ª dosis antes del año con un mínimo de 4 semanas de diferencia y la 3ª un mínimo de 2 meses después, está bien vacunado y no necesita dosis adicionales. Igualmente que si la 2º y la 3ª dosis se administraron después de los 12 meses, con 2 meses de intervalo entre ellas. \nUn saludo",
+      "rag_answer": "Según los fragmentos proporcionados, no es posible responder a tu pregunta con exactitud. Los fragmentos no especifican pautas de vacunación diferenciadas para la vacuna antineumocócica (Prevenar) en función de la edad de inicio, y tampoco establecen un número de dosis inferior a las recomendadas en función de la edad a la que el niño comenzó a vacunarse.\n\nSin embargo, el manual sí indica que, en general, las dosis administradas previamente son válidas siempre que se hayan respetado las edades mínimas y los intervalos entre dosis.\n\nPor lo tanto, te sugiero que consultes con el pediatra de tu hijo para que evalúe su situación específica y te proporcione la información más precisa basada en su historia clínica y las recomendaciones actuales.\n\nEnlaces a los capítulos relevantes:\n\n*   [7. Calendarios de inmunización en España](https://vacunasaep.org/documentos/manual/cap-7)\n*   [11. Calendarios acelerados. Inmunización de rescate en niños y adolescentes con inmunización inadecuada](https://vacunasaep.org/documentos/manual/cap-11)\n*   [1. Generalidades de las inmunizaciones](https://vacunasaep.org/documentos/manual/cap-1)",
+      "pipeline_time": 17.60194993019104,
+      "retrieval_time": 1.0811481475830078,
+      "reranking_time": 1.434971809387207,
+      "generation_time": 2.280856132507324,
+      "evaluation_time": 12.797571897506714,
+      "total_time": 17.59574294090271,
+      "context_length": 187075,
+      "documents_retrieved": 60,
+      "documents_reranked": 30,
+      "processed_at": "2025-06-20T20:24:03.294735",
       "evaluation": {
         "human_evaluation": {
           "correctness": 4,
           "completeness": 2,
           "relevance": 5,
           "clarity_and_fluency": 5,
-          "alignment_with_intent": 4,
-          "justification": "The human answer is correct in stating the vaccine is invalid and needs replacing.  However, it lacks detail on the type of vaccine and potential waiting periods.  It's clear, concise, and directly addresses the question's intent, albeit incompletely."
+          "alignment_with_intent": 3,
+          "justification": "La respuesta humana ofrece información precisa sobre las condiciones bajo las cuales tres dosis de la vacuna Prevenar serían suficientes, lo cual es coherente con los protocolos de vacunación para inicios tardíos. Sin embargo, no aborda la segunda parte de la pregunta del usuario sobre la conveniencia de administrar una dosis adicional a la edad actual del niño (3-4 años), lo que la hace incompleta. La redacción es clara y fluida, y el contenido es directamente relevante a la consulta, aunque solo abarca una parte de la misma."
         },
         "rag_evaluation": {
+          "correctness": 0,
+          "completeness": 0,
+          "relevance": 0,
+          "clarity_and_fluency": 0,
+          "alignment_with_intent": 0,
+          "justification": "La respuesta RAG afirma explícitamente que 'no es posible responder a tu pregunta con exactitud' y que los fragmentos no especifican la información necesaria. De acuerdo con las instrucciones, si una respuesta admite incapacidad para responder debido a falta de información o contexto, se le debe asignar 0 en todos los criterios."
+        }
+      }
+    },
+    {
+      "original_index": 131,
+      "question": "Hola, tengo dudas acerca de si poner la vacuna frente al rotavirus a mi hijo de 2 meses. Yo, su madre, tuve una invaginación grave cuando tenía 3 meses de edad (no relacionada con la vacuna). ¿El antecedente familiar supone un riesgo? ¿Sería recomendable ponérsela? ¿Es más aconsejable alguna de las 2 presentaciones que existen? Gracias",
+      "human_answer": "El antecedente de usted misma no presupone un mayor riesgo para su hijo, por lo que puede vacunarle frente al rotavirus. Por lo demás, no se ha comprobado que existan diferencias entre ambas vacunas respecto a esta cuestión, la de la seguridad (tampoco en cuanto a la efectividad), por lo que le recomendamos la vacunación con cualquiera de las vacunas disponibles. Considere solo las diferencias de pautas (2 o 3 dosis).\nUn saludo,",
+      "rag_answer": "Basándome en los fragmentos del manual proporcionados, puedo responder a tus dudas:\n\n*   **Antecedentes familiares y riesgo:** El manual no especifica si los antecedentes familiares de invaginación intestinal suponen un riesgo para la administración de la vacuna frente al rotavirus.\n*   **Recomendación:** La vacuna frente al rotavirus se recomienda en todos los lactantes (Fragmento 35).\n*   **Presentaciones:** Existen dos presentaciones de la vacuna frente al rotavirus: Rotarix (monovalente) y RotaTeq (pentavalente). Ambas son seguras y eficaces, y no interfieren con otras vacunas del calendario (Fragmento 35). La pauta de Rotarix es de 2 dosis y la de RotaTeq es de 3 dosis (Fragmento 35). Se recomienda iniciar la vacunación a partir de las 6 semanas de edad (Fragmento 35).\n\n**Importante:** La administración de la vacuna frente al rotavirus está contraindicada en caso de antecedente de invaginación intestinal (o malformación intestinal no corregida que predisponga a invaginación intestinal) (Fragmento 1 y 3). Por lo tanto, aunque la madre haya tenido invaginación intestinal, no es una contraindicación para que el bebé reciba la vacuna, pero sí es importante que el médico evalúe la situación y el riesgo individual del niño.\n\nEnlaces a los capítulos del manual relevantes:\n\n*   [https://vacunasaep.org/documentos/manual/cap-1](https://vacunasaep.org/documentos/manual/cap-1)\n*   [https://vacunasaep.org/documentos/manual/cap-3](https://vacunasaep.org/documentos/manual/cap-3)\n*   [https://vacunasaep.org/documentos/manual/cap-35](https://vacunasaep.org/documentos/manual/cap-35)\n*   [https://vacunasaep.org/documentos/manual/cap-17](https://vacunasaep.org/documentos/manual/cap-17)",
+      "pipeline_time": 34.63785099983215,
+      "retrieval_time": 1.4198131561279297,
+      "reranking_time": 1.2081711292266846,
+      "generation_time": 3.6752710342407227,
+      "evaluation_time": 28.33187198638916,
+      "total_time": 34.63609004020691,
+      "context_length": 110358,
+      "documents_retrieved": 60,
+      "documents_reranked": 30,
+      "processed_at": "2025-06-20T20:24:38.941992",
+      "evaluation": {
+        "human_evaluation": {
           "correctness": 5,
           "completeness": 5,
           "relevance": 5,
-          "clarity_and_fluency": 4,
+          "clarity_and_fluency": 5,
           "alignment_with_intent": 5,
-          "justification": "The RAG answer is factually accurate, providing crucial information about the difference in handling inactivated vs. attenuated vaccines.  It's complete in addressing the implications of an expired vaccine and provides a relevant source. The clarity could be slightly improved by simplifying the sentence structure."
-        }
-      },
-      "metrics": {
-        "total_time": 14.081035137176514,
-        "retrieval_time": 9.11919903755188,
-        "reranking_time": 0.9890260696411133,
-        "generation_time": 1.7682170867919922,
-        "evaluation_time": 2.201923131942749,
-        "documents_retrieved": 60,
-        "documents_reranked": 30,
-        "context_length": 64596
-      },
-      "processed_at": "2025-06-12T19:02:15.090981"
-    },
-    {
-      "original_index": 125,
-      "question": "Buenas tardes, estando embarazados de 2 semanas, sin saberlo, el ginecólogo nos dijo que teníamos que poner dicha vacuna, triple vírica, y lo hicimos pero no sabiamos que estábamos en estado. Existe riesgo para el feto o la madre? Un saludo y muchas gracias.",
-      "human_answer": "Pueden estar tranquilos.\nNunca se ha observado un perjuicio para el feto o la madre provocado por la vacunación inadvertida con triple vírica durante la gestación.\nLa recomendación de no vacunar durante el embarazo es por precaución, por evitar un riesgo teórico, dado que esta vacuna contiene virus vivos, eso sí, atenuados para que no sean dañinos.\nEn cualquier caso este dato debe constar en la historia clínica de su, deseamos, feliz embarazo.\nUn saludo.",
-      "rag_answer": "Según el capítulo 3, \"Seguridad de las inmunizaciones. Contraindicaciones y precauciones\", el embarazo es una contraindicación temporal para la administración de cualquier vacuna atenuada, vírica o bacteriana.  Sin embargo, los registros demuestran que la administración inadvertida de vacunas como la triple vírica durante el embarazo no ha producido casos de síndrome de rubeola congénita, y que el riesgo es mucho menor que el de la infección natural durante el embarazo.  La administración inadvertida de la vacuna no constituye un motivo para la interrupción del embarazo (Capítulo 3).\n\n\nURLs: https://vacunasaep.org/documentos/manual/cap-3",
-      "evaluation": {
-        "human_evaluation": {
-          "correctness": 4,
+          "justification": "La respuesta humana es excelente, abordando de manera directa y precisa todas las inquietudes de la usuaria. Aclara que el antecedente familiar de invaginación de la madre (no relacionada con vacuna) no supone riesgo para el bebé, recomienda la vacunación y explica que ambas presentaciones de la vacuna son igualmente seguras y eficaces, diferenciándose solo en la pauta de dosis. La redacción es clara, concisa y totalmente alineada con la intención de la pregunta, ofreciendo una guía profesional y tranquilizadora."
+        },
+        "rag_evaluation": {
+          "correctness": 3,
           "completeness": 4,
-          "relevance": 5,
-          "clarity_and_fluency": 5,
-          "alignment_with_intent": 5,
-          "justification": "The answer is mostly correct and reassuring, providing accurate information about the low risk associated with accidental MMR vaccination during early pregnancy.  It's slightly less precise than the RAG answer but very clear and directly addresses the user's concerns. The completeness could be improved by mentioning the potential for mild side effects in the mother."
-        },
-        "rag_evaluation": {
-          "correctness": 5,
-          "completeness": 5,
-          "relevance": 5,
-          "clarity_and_fluency": 4,
-          "alignment_with_intent": 5,
-          "justification": "The RAG answer is factually accurate and provides a more nuanced response by referencing specific chapters and suggesting that while the vaccine is contraindicated, accidental administration poses minimal risk.  It's more complete and cites a source. The clarity could be improved slightly by simplifying the language and removing the chapter references,  making it more accessible to the average user."
-        }
-      },
-      "metrics": {
-        "total_time": 14.969130992889404,
-        "retrieval_time": 9.616592168807983,
-        "reranking_time": 1.0015320777893066,
-        "generation_time": 2.1152431964874268,
-        "evaluation_time": 2.2325522899627686,
-        "documents_retrieved": 60,
-        "documents_reranked": 30,
-        "context_length": 103008
-      },
-      "processed_at": "2025-06-12T19:02:32.070045"
-    },
-    {
-      "original_index": 175,
-      "question": "Me gustaria saber si se puede administrar al mismo tiempo vacuna VPH (Cervarix )junto con Meningitis C y Td, vacunacion a los 14 años",
-      "human_answer": "Sí, se pueden administrar simultaneamente sin ningún problema.\nComité Asesor de Vacunas de la AEP",
-      "rag_answer": "Según el capítulo 5, \"El acto de la inmunización: antes, durante y después\",  se pueden administrar 3 o 4 inyecciones intramusculares (IM) en el mismo acto vacunal, manteniendo una distancia mínima de 2,5 cm entre los puntos de inyección.  Las vacunas pueden administrarse en un orden determinado, dejando para el final las más dolorosas; entre ellas se incluyen la vacuna neumocócica conjugada, la vacuna frente al VPH y las vacunas antimeningocócicas. En niños mayores, pueden usarse ambas regiones deltoideas o los muslos.  En el caso de administrar dos vacunas antimeningocócicas, se recomienda aplicarlas en miembros diferentes (Capítulo 5).\n\nEl capítulo 42, \"Virus del papiloma humano\", indica que la vacuna VPH (Cervarix) es una vacuna inactivada.  El mismo capítulo menciona que las vacunas inactivadas pueden administrarse al mismo tiempo que otras vacunas inactivadas o atenuadas, en lugares anatómicos distintos (Capítulo 42).  No hay información en los fragmentos proporcionados que contradiga la posibilidad de administrar la vacuna VPH junto con las vacunas de la meningitis C y la Td a los 14 años.\n\n\nURLs:\n\n[https://vacunasaep.org/documentos/manual/cap-5]\n[https://vacunasaep.org/documentos/manual/cap-42]",
-      "evaluation": {
-        "human_evaluation": {
-          "correctness": 5,
-          "completeness": 3,
-          "relevance": 5,
-          "clarity_and_fluency": 5,
-          "alignment_with_intent": 5,
-          "justification": "The answer is correct and directly addresses the question.  It's concise and clear. However, it lacks detail regarding the source and doesn't explain the basis for the 'no problem' statement."
-        },
-        "rag_evaluation": {
-          "correctness": 4,
-          "completeness": 4,
-          "relevance": 5,
-          "clarity_and_fluency": 4,
-          "alignment_with_intent": 5,
-          "justification": "The answer provides a detailed and relevant response based on cited chapters from a source.  It's mostly clear, although the structure could be improved for better readability. It acknowledges the lack of contradicting information, which is responsible. The information provided is consistent with common vaccination practices, but not explicitly states a definitive YES or NO."
-        }
-      },
-      "metrics": {
-        "total_time": 13.536389112472534,
-        "retrieval_time": 7.208846092224121,
-        "reranking_time": 0.8349349498748779,
-        "generation_time": 3.4440712928771973,
-        "evaluation_time": 2.047294855117798,
-        "documents_retrieved": 60,
-        "documents_reranked": 30,
-        "context_length": 112256
-      },
-      "processed_at": "2025-06-12T19:02:47.615817"
-    },
-    {
-      "original_index": 410,
-      "question": "Buenas tardes, tengo un paciente de 3 años, ha recibido 1 dosis de vacuna frente a v. Varicela, la madre indica q estuvo en contacto con otro niño con varicela hace 20 días, consulta hoy por lesiónes en miembro superior compatibles con herpes zoster. A este paciente se le administra la 2da dosis de la vacuna o queda descartada? Muchas gracias y un saludo",
-      "human_answer": "Depende. Si Ud considera que realmente es un herpes zoster y puede realizar un cultivo de exudado de alguna lesión confirmándolo, no sería necesario administrar ninguna dosis más de vacuna. El contacto con el sujeto que padece varicela no reactiva el virus en forma de herpes zoster, por lo que le aconsejamos que se asegure del diagnostico.\nUn saludo",
-      "rag_answer": "Según el capítulo 41. Varicela,  el esquema vacunal recomendado para la varicela es de dos dosis.  La primera dosis se administra entre los 12-15 meses de edad, preferiblemente a los 15 meses; la segunda dosis a los 2 años de edad.  El calendario vacunal del CISNS en 2018 incluye una primera dosis a los 15 meses y una segunda a los 3-4 años.  En el caso de un niño de 3 años que ha recibido una dosis y ha estado en contacto con un caso de varicela hace 20 días,  puede administrarse la segunda dosis, aunque no se ha estudiado la efectividad de esta medida en caso de contacto previo con el virus (capítulo 41, Varicela).  Sin embargo, las lesiones compatibles con herpes zoster sugieren una reactivación del virus varicela-zóster y no una infección primaria por varicela, por lo que la administración de la segunda dosis queda a criterio médico.\n\n\nURLs: [https://vacunasaep.org/documentos/manual/cap-41]",
-      "evaluation": {
-        "human_evaluation": {
-          "correctness": 4,
-          "completeness": 3,
-          "relevance": 5,
-          "clarity_and_fluency": 4,
-          "alignment_with_intent": 5,
-          "justification": "The human answer is mostly correct in stating that a second dose might not be necessary if herpes zoster is confirmed. However, it lacks detail regarding the vaccination schedule and doesn't explicitly mention the possibility of administering the second dose. The clarity and fluency are good, and it directly addresses the question's intent."
-        },
-        "rag_evaluation": {
-          "correctness": 4,
-          "completeness": 5,
-          "relevance": 5,
-          "clarity_and_fluency": 4,
-          "alignment_with_intent": 5,
-          "justification": "The RAG answer provides a more complete response, referencing vaccination schedules and acknowledging the uncertainty regarding the effectiveness of a second dose after prior contact. It correctly points out that herpes zoster suggests a reactivation, not a primary infection.  The clarity is good, although a bit more concise phrasing might improve it. It fully addresses the question's intent."
-        }
-      },
-      "metrics": {
-        "total_time": 12.04482626914978,
-        "retrieval_time": 6.23580002784729,
-        "reranking_time": 0.8962576389312744,
-        "generation_time": 2.670560836791992,
-        "evaluation_time": 2.2405171394348145,
-        "documents_retrieved": 60,
-        "documents_reranked": 30,
-        "context_length": 103412
-      },
-      "processed_at": "2025-06-12T19:03:01.671103"
-    },
-    {
-      "original_index": 436,
-      "question": "Tras administrar las vacunas de los 4 meses (Infanrix Hexa y meningitec, en cara anterolateral de ambos muslos), de forma inmediata el bebé presentó llanto intenso y en un par de minutos , en la pierna en que administré la Infanrix Hexa, edema intenso hasta el pie y petequias , limitado todo a la pierna, sin espasmo bronquial ni otra sintomatología.Con la administración de frio local en toda la pierna bajó la inflamación, persistiendo las petequias. La madre recordó después que tras la primera dosis a los 2 meses también había tenido manchas en una pierna, escasas, que atribuyó a una reacción vacunal dentro de lo normal. Aun-que en ficha técnica se describe el edema intenso de miembros y la posibilidad de cardenales, ¿se debe administrar la 3ª dosis a los 6 meses y la Pentavalente de los 18 meses? ¿Es posible que sea una reacción alérgica cada vez más intensa ante dosis sucesivas?En todo caso, ¿se debería adoptar alguna medida preventiva si se administran las dosis siguientes o hacerlo en medio hospitalario? Un saludo y ,como siempre, muchas gracias por estar ahí ayudándonos en nuestra práctica diaria.",
-      "human_answer": "La reacción que comenta parace más bien relacionada con la administración que con la vacuna en sí, aunque el antecedente de pasar lo mismo en otra ocasión produce confusión. De cualquier forma, no se trata de una reacción anafiláctica puesto que no hay reacción sistémica. Quizás el principio de prudencia aconsejaría hacer la próxima vacunación bajo una mayor supervisión.\nComité Asesor de Vacunas de la AEP.",
-      "rag_answer": "La información proporcionada no permite responder si se debe administrar la tercera dosis de Infanrix Hexa a los 6 meses y la Pentavalente a los 18 meses, ni si la reacción observada es una reacción alérgica cada vez más intensa.  Tampoco se puede determinar si se deben adoptar medidas preventivas específicas para la administración de las siguientes dosis o si debe realizarse en un medio hospitalario. Los fragmentos del Manual de Inmunizaciones de la AEP no describen este caso clínico específico ni ofrecen directrices para situaciones similares con las vacunas Infanrix Hexa y Meningitec.\n\nURLs de los capítulos relevantes: No hay URLs de capítulos que contengan información directamente relevante a la pregunta del usuario.",
-      "evaluation": {
-        "human_evaluation": {
-          "correctness": 3,
-          "completeness": 2,
           "relevance": 4,
-          "clarity_and_fluency": 4,
+          "clarity_and_fluency": 3,
           "alignment_with_intent": 3,
-          "justification": "The human answer offers a plausible explanation, suggesting the reaction might be related to the injection technique rather than the vaccine itself.  However, it lacks specific recommendations regarding future vaccinations. The answer is well-written and relevant to the query but is not entirely complete. The correctness is moderate because it is an interpretation of the clinical picture, not a definitive diagnosis."
-        },
-        "rag_evaluation": {
-          "correctness": 0,
-          "completeness": 0,
-          "relevance": 0,
-          "clarity_and_fluency": 0,
-          "alignment_with_intent": 0,
-          "justification": "The RAG answer explicitly states it cannot answer the question due to insufficient information.  Therefore, all criteria receive a score of 0."
+          "justification": "La respuesta RAG proporciona información correcta sobre las vacunas de rotavirus y sus recomendaciones generales, así como las características de ambas presentaciones. Sin embargo, su manejo de la pregunta crucial sobre el riesgo del antecedente familiar es confuso: primero afirma que el manual no lo especifica, para luego aclarar correctamente que no es una contraindicación para el bebé. Esta inconsistencia interna reduce la claridad y la fluidez. Aunque finalmente llega a la conclusión correcta, la forma de presentarla genera incertidumbre y disminuye su alineación con la intención de la usuaria de obtener una respuesta directa y tranquilizadora. La inclusión de enlaces es un buen detalle, pero no compensa la ambigüedad inicial."
         }
-      },
-      "metrics": {
-        "total_time": 13.804711818695068,
-        "retrieval_time": 8.435693979263306,
-        "reranking_time": 1.1765828132629395,
-        "generation_time": 2.169064998626709,
-        "evaluation_time": 2.0176801681518555,
-        "documents_retrieved": 60,
-        "documents_reranked": 30,
-        "context_length": 94616
-      },
-      "processed_at": "2025-06-12T19:03:17.491808"
+      }
     },
     {
-      "original_index": 189,
-      "question": "Buenos días. Un niño de 14 años bien vacunado, con factores de riesgo de hepatitis B ( internado en centro de menores) tiene que ponerse una dosis de recuerdo por tener serología negativa . Está en tto. con aciclovir desde hace 5 días por un herpes zóster. Creo que se le puede poner la vacuna de recuerdo sin problemas pero ruego me lo confirmen, ya que al ser un tratamiento por un corto periodo de tiempo no sé si es aconsejable esperar a que lo termine.",
-      "human_answer": "Un tratamiento con aciclovir no tiene por qué inteferir con una vacunación frente a la hepatitis B.\nUn saludo",
-      "rag_answer": "La información proporcionada no permite confirmar si se puede administrar la vacuna de recuerdo de la hepatitis B a un niño de 14 años con tratamiento de aciclovir por herpes zóster.  Los fragmentos del manual no abordan la interacción entre el tratamiento con aciclovir a corto plazo y la vacunación contra la hepatitis B.  Para responder a la pregunta, se necesita información adicional que no está presente en los fragmentos proporcionados.\n\n\nNo se incluyen URLs porque la respuesta no se puede obtener de los fragmentos dados.",
-      "evaluation": {
-        "human_evaluation": {
-          "correctness": 4,
-          "completeness": 2,
-          "relevance": 5,
-          "clarity_and_fluency": 5,
-          "alignment_with_intent": 4,
-          "justification": "The human answer is correct in stating that aciclovir treatment doesn't generally interfere with Hepatitis B vaccination. However, it lacks completeness by not addressing other potential factors related to the child's health or the specific vaccination.  The answer is highly relevant, clear, and fluent, and directly addresses the core concern about the interaction between the two. The intent is partially fulfilled as the core concern is addressed, but it would have been better with more comprehensive information."
-        },
-        "rag_evaluation": {
-          "correctness": 0,
-          "completeness": 0,
-          "relevance": 0,
-          "clarity_and_fluency": 0,
-          "alignment_with_intent": 0,
-          "justification": "The RAG answer explicitly states it cannot answer due to lack of information.  Therefore, all criteria receive a score of 0."
-        }
-      },
-      "metrics": {
-        "total_time": 14.531131982803345,
-        "retrieval_time": 9.218204021453857,
-        "reranking_time": 1.2241730690002441,
-        "generation_time": 1.9148049354553223,
-        "evaluation_time": 2.1681132316589355,
-        "documents_retrieved": 60,
-        "documents_reranked": 30,
-        "context_length": 107745
-      },
-      "processed_at": "2025-06-12T19:03:34.034798"
-    },
-    {
-      "original_index": 399,
-      "question": "buenas tarde tengo un paciente con VIH, El cual tiene puestas en 2015 3 dosis de gardasil 4, desearía saber si precisa algun recuerdo de gardasil9 o la pauta completa, muchas gracias",
-      "human_answer": "Lo sentimos, pero esta sección de la web del Comité Asesor de Vacunas de la Asociación Española de Pediatría, a la que usted se ha dirigido, únicamente responde a preguntas relacionadas con las vacunaciones infantiles y del embarazo.\nPara preguntas sobre adultos le recomendamos dirigirse al apartado de consultas de la web de la Asociación Española de Vacunología: http://www.vacunas.org/enviar-consulta/\nUn saludo,\nComité Asesor de Vacunas de la AEP",
-      "rag_answer": "Lo siento, pero no puedo responder a su pregunta con la información proporcionada.  Los fragmentos del Manual de Inmunizaciones de la AEP no contienen información sobre las pautas de recuerdo para Gardasil 4 o la necesidad de una pauta completa de Gardasil 9 en pacientes con VIH que hayan recibido previamente tres dosis de Gardasil 4.",
-      "evaluation": {
-        "human_evaluation": {
-          "correctness": 5,
-          "completeness": 5,
-          "relevance": 5,
-          "clarity_and_fluency": 5,
-          "alignment_with_intent": 5,
-          "justification": "The human answer correctly identifies that it's outside its area of expertise (pediatric and pregnancy vaccinations) and provides a relevant and helpful alternative resource for adult vaccination inquiries.  The response is perfectly clear, fluent, and directly addresses the user's intent."
-        },
-        "rag_evaluation": {
-          "correctness": 5,
-          "completeness": 5,
-          "relevance": 5,
-          "clarity_and_fluency": 5,
-          "alignment_with_intent": 5,
-          "justification": "The RAG answer correctly states it cannot answer the question given the provided data sources.  It clearly explains the reason for its inability to provide an answer and is relevant, complete, and fluent. While it doesn't provide an alternative, its honest admission of limitations is valuable."
-        }
-      },
-      "metrics": {
-        "total_time": 13.121856927871704,
-        "retrieval_time": 8.521000862121582,
-        "reranking_time": 1.189633846282959,
-        "generation_time": 1.3451862335205078,
-        "evaluation_time": 2.059495210647583,
-        "documents_retrieved": 60,
-        "documents_reranked": 30,
-        "context_length": 61845
-      },
-      "processed_at": "2025-06-12T19:03:49.169211"
-    },
-    {
-      "original_index": 15,
-      "question": "Hola, iremos a vivir a Japón durante aproximadamente 6 meses. Mi bebé tendrá de 10 a 16 meses y hasta los 10 meses cumplirá con el calendario de vacunación de catalunya, incluidas la bexero y la rotateq. ¿Qué me recomendáis para las vacunas que le tocarían poner enntre los 10 y los 16 meses si estoy en Japón? ¿Hay alguna vacuna recomendada además de las del calendario de cataluña? Gracias",
-      "human_answer": "Teniendo en cuenta la fecha en que llega a Japón y por las diferencia de calendario existentes entre ambos, así como los preparados usados en uno y otro país le recomendamos:\n\nRecibirá BCG, Hib y TV  a los 12 meses\nRecibirá una tretra-bacteriana (DTPa IPV) a los 18 meses\nRequiere una dosis más de hepatitis B (3ª dosis, la que en Cataluña le correspondería a los 11 m) que puede administrar en cualquier momento antes de partir.\n\nDebe consultar en un centro de Sanidad Exterior (vea este enlace) acerca de la vacunación de encefalitis Japonesa\nNo estaría de más que al retorno revise el calendario de cara a armonizar las vacunas administradas y las que hipotéticamente pudieran quedar pendientes de acuerdo con el calendario de su Comunidad\nReciba un cordial saludo",
-      "rag_answer": "Según el capítulo 13, Inmunizaciones del niño viajero,  se recomienda actualizar el calendario vacunal de rutina antes de viajar.  Si el calendario de vacunación del bebé no está completo, se deben administrar las dosis que faltan antes del viaje, según el calendario acelerado o de rescate de vacunaciones (capítulo 13).  El capítulo 7, Calendarios de inmunización en España, detalla las vacunas incluidas en el calendario español, pero no especifica qué vacunas serían necesarias adicionalmente para un viaje de 6 meses a Japón para un bebé de 10-16 meses que ya ha recibido Bexsero y Rotateq.  El capítulo 8, Calendarios de inmunización en el mundo, menciona que Japón incluye en su calendario la BCG, el sarampión y la rubeola (sin parotiditis), la vacuna del VPH, la vacuna antineumocócica en pauta 3+1 y la varicela con 2 dosis.  Además, debido a la epidemiología de Japón, se vacuna contra la encefalitis japonesa.  Sin embargo,  no se puede determinar con la información proporcionada qué vacunas adicionales se recomiendan específicamente para este caso en particular.\n\n\nURLs: [https://vacunasaep.org/documentos/manual/cap-7], [https://vacunasaep.org/documentos/manual/cap-13], [https://vacunasaep.org/documentos/manual/cap-8]",
-      "evaluation": {
-        "human_evaluation": {
-          "correctness": 4,
-          "completeness": 3,
-          "relevance": 5,
-          "clarity_and_fluency": 5,
-          "alignment_with_intent": 5,
-          "justification": "The human answer provides specific vaccine recommendations, showing a good understanding of the vaccination schedules in both Catalonia and Japan.  While it doesn't exhaustively cover every potential vaccine, it addresses the core question effectively and clearly. The advice to consult a specialist is also very responsible."
-        },
-        "rag_evaluation": {
-          "correctness": 3,
-          "completeness": 2,
-          "relevance": 4,
-          "clarity_and_fluency": 4,
-          "alignment_with_intent": 3,
-          "justification": "The RAG answer correctly points to the need for updating the vaccination schedule and mentions relevant vaccines available in Japan. However, it falls short in providing concrete recommendations.  While it references relevant chapters, it doesn't synthesize the information to offer a definitive answer to the question of what specific additional vaccines are needed. The clarity is good, but it lacks the directness and specific advice of the human answer."
-        }
-      },
-      "metrics": {
-        "total_time": 25.308786153793335,
-        "retrieval_time": 6.292783975601196,
-        "reranking_time": 1.164536714553833,
-        "generation_time": 15.469274997711182,
-        "evaluation_time": 2.3716330528259277,
-        "documents_retrieved": 60,
-        "documents_reranked": 30,
-        "context_length": 143256
-      },
-      "processed_at": "2025-06-12T19:04:16.493387"
-    },
-    {
-      "original_index": 457,
-      "question": "Buenas tardes.  Tenemos un bebé de un año, y nos gustaría saber si alguna de las vacunas administradas en la Comunidad de Madrid contienen mercurio en cualquiera de sus variantes, o cualquier otro metal pesado. Si fuera así, cuáles y en qué grado.  Por otra parte, nos gustaría saber si hay algún problema en que se administre la vacuna triple vírica cuando el niño cumpla 24 meses.  Muchas gracias por su ayuda y enhorabuena por el buen servicio que prestan.",
-      "human_answer": "Ninguna vacuna comercializada en España incluida o no en los calendarios gratuitos de las comunidades autónomas contiene metales pesados o derivados del mercurio por lo que no tiene que tener ninguna precaución con las mismas y les aconsejamos que vacunen a su hijo con las vacunas gratuitas y tambien con las vacunas no incluidas gratuitamente, pero que son recomendadas por este comité para niños sanos como las del neumococo, varicela y rotavirus.\nLa vacuna triple vírica se puede aplicar a partir de los 12 meses de edad, en 2 dosis separadas entre sí por una distancia mínima de 1 mes, así que puede vacunarlo con tranquilidad.\nComité Asesor de Vacunas de la AEP",
-      "rag_answer": "No se puede responder a la pregunta sobre si las vacunas administradas en la Comunidad de Madrid contienen mercurio u otros metales pesados, ni en qué grado, con la información proporcionada.  Los fragmentos del Manual de Inmunizaciones de la AEP no contienen datos específicos sobre la composición de las vacunas administradas en esa comunidad autónoma.\n\nRespecto a la segunda parte de la pregunta, sobre la administración de la vacuna triple vírica a los 24 meses, el capítulo 3 indica que la vacuna triple vírica no se aconseja administrar antes de los 11 meses de vida porque puede interferir con los anticuerpos maternos y no producir una respuesta inmunológica completa.  Sin embargo,  en situaciones epidémicas se puede administrar a partir de los 6 meses, aunque posteriormente deberá recibir dos dosis a partir de los 12 meses.  El capítulo 7 menciona que en el calendario de 2012 la primera dosis de la triple vírica se pauta a los 12 meses y la segunda dosis entre los 3 y 4 años. El capítulo no especifica si hay algún problema en administrarla a los 24 meses, siempre y cuando se haya completado el esquema vacunal según los calendarios.\n\n\nURLs de los capítulos relevantes:\n\n[https://vacunasaep.org/documentos/manual/cap-3]\n[https://vacunasaep.org/documentos/manual/cap-7]",
-      "evaluation": {
-        "human_evaluation": {
-          "correctness": 5,
-          "completeness": 5,
-          "relevance": 5,
-          "clarity_and_fluency": 5,
-          "alignment_with_intent": 5,
-          "justification": "The human answer is completely correct, addresses both parts of the question comprehensively, is clear, fluent, and perfectly aligned with the user's intent. It provides a concise and reassuring response."
-        },
-        "rag_evaluation": {
-          "correctness": 3,
-          "completeness": 3,
-          "relevance": 4,
-          "clarity_and_fluency": 4,
-          "alignment_with_intent": 3,
-          "justification": "The RAG answer partially fulfills the request. While it correctly addresses the second part of the question regarding the triple viral vaccine, it fails to answer the first part about mercury content in vaccines, stating it lacks information. The provided information on the triple viral vaccine, although relevant, is incomplete and somewhat ambiguous.  The clarity and fluency are good, but the incomplete response lowers the overall score."
-        }
-      },
-      "metrics": {
-        "total_time": 30.638489961624146,
-        "retrieval_time": 12.630911827087402,
-        "reranking_time": 1.0603740215301514,
-        "generation_time": 14.794683933258057,
-        "evaluation_time": 2.148585319519043,
-        "documents_retrieved": 60,
-        "documents_reranked": 30,
-        "context_length": 213650
-      },
-      "processed_at": "2025-06-12T19:04:49.146968"
-    },
-    {
-      "original_index": 295,
-      "question": "Buenas tardes, Escribo en relación a una familia recién llegada de Ucrania con 3 niños de 9, 12 y 14 años de edad. La madre refiere que no se les ha administrado ninguna vacuna por antecedente materno y paterno de angioedema de Quincke con la vacunación. ¿Es el angioedema una contraindicación para la vacunación sistemática? ¿Y el hecho de tener antecedentes familiares? Muchas gracias.",
-      "human_answer": "El angioedema paterno o materno no constituye una contraindicación para la vacunación.\nUn saludo",
-      "rag_answer": "No se puede responder a la pregunta con la información proporcionada.  Los fragmentos del \"Manual de Inmunizaciones de la AEP\" no contienen información sobre el angioedema de Quincke como contraindicación para la vacunación sistemática, ni sobre la relevancia de los antecedentes familiares en este caso.",
-      "evaluation": {
-        "human_evaluation": {
-          "correctness": 4,
-          "completeness": 2,
-          "relevance": 5,
-          "clarity_and_fluency": 5,
-          "alignment_with_intent": 4,
-          "justification": "The human answer is correct in stating that parental angioedema is not a contraindication for vaccination. However, it lacks completeness as it doesn't address the question regarding familial history and only provides a very concise answer.  It is highly relevant, clear, fluent, and mostly aligns with the intent by directly answering the main question."
-        },
-        "rag_evaluation": {
-          "correctness": 0,
-          "completeness": 0,
-          "relevance": 0,
-          "clarity_and_fluency": 0,
-          "alignment_with_intent": 0,
-          "justification": "The RAG answer explicitly states it cannot answer the question due to lack of information.  Therefore, all criteria receive a score of 0."
-        }
-      },
-      "metrics": {
-        "total_time": 44.63580918312073,
-        "retrieval_time": 11.892387866973877,
-        "reranking_time": 28.728033781051636,
-        "generation_time": 1.8822968006134033,
-        "evaluation_time": 2.0633132457733154,
-        "documents_retrieved": 60,
-        "documents_reranked": 30,
-        "context_length": 107224
-      },
-      "processed_at": "2025-06-12T19:05:35.794945"
-    },
-    {
-      "original_index": 227,
-      "question": "Consulta de vacunación de varicela en niño de 12 años , que en el año 2011 fue diagnosticado de leucemia linfoblástica. Realizado trasplante de progenitores hematopoyéticos y desde 2011 enfermedad en remisión completa y sin tratamiento .Su madre me dice que el niño pasó la varicela posteriormente . Sería necesaria la vacunación de varicela en este caso ? Muchas gracias",
-      "human_answer": "Pues sería recomendable vacunarlo pues tras el trasplante se compromete la memoria inmune tanto la que procede de la enfermedad salvaje como la de la vacunación; ello es también extensible a la TV.\nUn saludo",
-      "rag_answer": "Según el capítulo 14,  \"Inmunizaciones en niños inmunodeprimidos o con tratamiento inmunosupresor\",  la vacunación contra la varicela requiere dos dosis.  En pacientes que necesitan adquirir inmunidad lo antes posible,  la segunda dosis puede adelantarse a un mes de la primera (capítulo 14).  El mismo capítulo indica que los contactos de pacientes inmunodeprimidos mayores de 12 meses deben ser vacunados si son susceptibles a la enfermedad.  Sin embargo, el capítulo 14 también señala que la vacunación contra la varicela está contraindicada en algunos pacientes, y recomienda consultar el apartado de recomendaciones específicas según el tipo de inmunodepresión (capítulo 14).  El  capítulo 17,  \"Inmunizaciones en niños con enfermedades crónicas\",  menciona que entre los pacientes con riesgo elevado de padecer formas graves de varicela se incluyen los niños inmunodeprimidos (capítulo 17).  En niños susceptibles con patología crónica no vacunados, se recomienda la vacunación con dos dosis sin esperar a los 12 años (capítulo 17).  Dado que el niño tuvo leucemia y un trasplante,  y está en remisión completa sin tratamiento, se necesita más información para determinar si está contraindicada la vacunación.  La información proporcionada no es suficiente para determinar si la vacunación es necesaria en este caso específico.\n\nURLs: https://vacunasaep.org/documentos/manual/cap-14, https://vacunasaep.org/documentos/manual/cap-17",
+      "original_index": 240,
+      "question": "Buenos días, Por motivo de la semana santa, me retrasan las vacunas de los dos meses desde el nacimiento. Le tocarían el día 24 de Marzo y se posponen al 31 de Marzo. ¿Existe algún problema por esa semana de retraso? Muchas gracias Un saludo",
+      "human_answer": "Ningún problema .Esté tranquilo.\nUn cordial saludo",
+      "rag_answer": "Con los datos proporcionados, **no es posible determinar si existe algún problema con el retraso de una semana en las vacunas de los dos meses**. Los fragmentos del manual de la AEP no especifican las consecuencias de retrasar las vacunas en el calendario.\n\nEnlaces a los capítulos del manual que han sido relevantes para la respuesta:\n\n*   [1. Generalidades de las inmunizaciones](https://vacunasaep.org/documentos/manual/cap-1)\n*   [7. Calendarios de inmunización en España](https://vacunasaep.org/documentos/manual/cap-7)\n*   [11. Calendarios acelerados. Inmunización de rescate en niños y adolescentes con inmunización inadecuada](https://vacunasaep.org/documentos/manual/cap-11)",
+      "pipeline_time": 14.630176067352295,
+      "retrieval_time": 1.4962351322174072,
+      "reranking_time": 1.2929739952087402,
+      "generation_time": 1.872265100479126,
+      "evaluation_time": 9.966745853424072,
+      "total_time": 14.62873125076294,
+      "context_length": 177040,
+      "documents_retrieved": 60,
+      "documents_reranked": 30,
+      "processed_at": "2025-06-20T20:24:54.579257",
       "evaluation": {
         "human_evaluation": {
           "correctness": 4,
           "completeness": 1,
           "relevance": 5,
-          "clarity_and_fluency": 4,
+          "clarity_and_fluency": 5,
           "alignment_with_intent": 5,
-          "justification": "The human answer is correct in that it recommends vaccination due to compromised immune memory post-transplant. However, it lacks detail and completeness.  The language is clear and directly addresses the question's intent."
+          "justification": "La respuesta humana es directa y tranquilizadora, y generalmente correcta en el contexto de un retraso mínimo de una semana en la vacunación. Sin embargo, carece de cualquier explicación, contexto o referencia a guías médicas que respalden la afirmación, lo que limita su exhaustividad como respuesta profesional."
         },
         "rag_evaluation": {
-          "correctness": 4,
+          "correctness": 0,
+          "completeness": 0,
+          "relevance": 0,
+          "clarity_and_fluency": 0,
+          "alignment_with_intent": 0,
+          "justification": "La respuesta RAG afirma explícitamente que 'no es posible determinar' si existe algún problema con el retraso, debido a la falta de información específica en sus fuentes. Según las instrucciones de evaluación, cualquier admisión de incapacidad para responder conlleva una puntuación de 0 en todos los criterios para esa respuesta."
+        }
+      }
+    },
+    {
+      "original_index": 135,
+      "question": "Buenas tardes, por error se administró dos dosis de vacuna meningocócica tetravalente Menveo a niño de 11 años de edad con un intervalo de 1 mes y 7 días. ¿Qué podemos recomendar al respecto? Muchas gracias.",
+      "human_answer": "Como sabe, la pauta de vacunación MenACWY en adolescentes consta de una única dosis.\nSe trata de una vacuna poco reactógena, por lo que no es de esperar ningún efecto adverso. Deben comunicar el error al paciente y su familia y dejar constancia en su historia.\nProcuren revisar los antecedentes vacunales antes de proceder a la vacunación, con el objetivo de evitar estos errores.\nUn saludo",
+      "rag_answer": "Con los datos proporcionados en los fragmentos, no es posible ofrecer una recomendación específica sobre qué hacer tras administrar dos dosis de la vacuna meningocócica tetravalente Menveo a un niño de 11 años con un intervalo de 1 mes y 7 días.\n\nLos fragmentos proporcionan información sobre:\n\n*   **Errores en la administración:** Se menciona la administración incorrecta de la vía, administración incompleta, y administración de vacunas caducadas, pero no se especifica qué hacer en caso de una doble administración con un intervalo menor al recomendado.\n*   **Intervalos entre dosis:** Se indica que, por consenso, se acepta un \"periodo de gracia\" de cuatro días si no se respeta el intervalo entre dosis. Si el adelanto es superior a cuatro días, se debe repetir la dosis. En este caso, el intervalo entre dosis fue menor al recomendado.\n*   **Efectos adversos:** Se mencionan efectos adversos, pero no qué hacer ante la administración de una dosis extra de una vacuna.\n*   **Recomendaciones después de la inmunización:** Se mencionan cuidados inmediatos, pero no ante una doble administración.\n\nPara obtener una recomendación, sería necesario consultar con un profesional médico.\n\nEnlaces a los capítulos del manual que han sido relevantes para elaborar la respuesta:\n\n*   [5. El acto de la inmunización: antes, durante y después](https://vacunasaep.org/documentos/manual/cap-5)\n*   [1. Generalidades de las inmunizaciones](https://vacunasaep.org/documentos/manual/cap-1)\n*   [3. Seguridad de las inmunizaciones. Contraindicaciones y precauciones](https://vacunasaep.org/documentos/manual/cap-3)",
+      "pipeline_time": 11.185744285583496,
+      "retrieval_time": 1.6373913288116455,
+      "reranking_time": 0.9526181221008301,
+      "generation_time": 3.4441099166870117,
+      "evaluation_time": 5.1498942375183105,
+      "total_time": 11.184606790542603,
+      "context_length": 79350,
+      "documents_retrieved": 60,
+      "documents_reranked": 30,
+      "processed_at": "2025-06-20T20:25:06.772900",
+      "evaluation": {
+        "human_evaluation": {
+          "correctness": 5,
+          "completeness": 4,
+          "relevance": 5,
+          "clarity_and_fluency": 5,
+          "alignment_with_intent": 5,
+          "justification": "La respuesta es médicamente precisa, informa sobre la baja reactogenicidad de la vacuna y la pauta de una única dosis. Ofrece recomendaciones claras y directas sobre la comunicación del error y la prevención de futuros incidentes. Cubre los aspectos más importantes de la pregunta de manera concisa."
+        },
+        "rag_evaluation": {
+          "correctness": 0,
+          "completeness": 0,
+          "relevance": 0,
+          "clarity_and_fluency": 0,
+          "alignment_with_intent": 0,
+          "justification": "La respuesta RAG afirma explícitamente que 'no es posible ofrecer una recomendación específica', lo cual, según las instrucciones, exige una puntuación de 0 en todos los criterios."
+        }
+      }
+    },
+    {
+      "original_index": 11,
+      "question": "Buenas tardes. Después de la segunda dosis de vacuna Comirnaty infantil, cuánto hay que esperar para considerar a un paciente correctamente vacunado, de cara a la actuación como contacto estrecho? (Cuarentena en casa o no)",
+      "human_answer": "La protección de las vacunas normalmente tarda en ser completa unas 2 semanas desde la segunda dosis. Si se ha entrado en contacto estando habiendo recibido una pauta de vacunación completa estarán exentas de la cuarentena. Los protocolos establecen, sin embargo, excepciones. Los alumnos con inmunodepresión deben realizar siempre cuarentena. Y también deben cumplirla, aunque estén vacunados, los contactos estrechos (en un grupo burbuja se considera como tales a todos los miembros de la clase) de un positivo causado por las variantes ómicron, beta o gamma (o que salud pública, que tiene la última palabra en la aplicación concreta de toda la normativa, considere que existe sospecha de que se trata de dicha variante).\nUn saludo\nComité Asesor de Vacunas.",
+      "rag_answer": "Lamentablemente, no se puede responder a la pregunta con la información proporcionada. Los fragmentos del manual no especifican cuánto tiempo después de la segunda dosis de la vacuna Comirnaty infantil se considera que un paciente está correctamente vacunado en relación con la actuación como contacto estrecho.\n\n[https://vacunasaep.org/documentos/manual/cap-2](https://vacunasaep.org/documentos/manual/cap-2)\n[https://vacunasaep.org/documentos/manual/cap-1](https://vacunasaep.org/documentos/manual/cap-1)\n[https://vacunasaep.org/documentos/manual/cap-3](https://vacunasaep.org/documentos/manual/cap-3)\n[https://vacunasaep.org/documentos/manual/cap-44](https://vacunasaep.org/documentos/manual/cap-44)\n[https://vacunasaep.org/documentos/manual/cap-5](https://vacunasaep.org/documentos/manual/cap-5)",
+      "pipeline_time": 13.947717905044556,
+      "retrieval_time": 1.217033863067627,
+      "reranking_time": 1.1932179927825928,
+      "generation_time": 2.4690916538238525,
+      "evaluation_time": 9.063819169998169,
+      "total_time": 13.945142984390259,
+      "context_length": 81696,
+      "documents_retrieved": 60,
+      "documents_reranked": 30,
+      "processed_at": "2025-06-20T20:25:21.727855",
+      "evaluation": {
+        "human_evaluation": {
+          "correctness": 5,
+          "completeness": 5,
+          "relevance": 5,
+          "clarity_and_fluency": 5,
+          "alignment_with_intent": 5,
+          "justification": "La información proporcionada es factualmente precisa y concuerda con los protocolos sanitarios conocidos para la vacunación COVID-19 en niños y la gestión de contactos estrechos. Cubre todos los aspectos de la pregunta, incluyendo el tiempo de espera para la protección completa y las condiciones de cuarentena, añadiendo excepciones cruciales para una aplicación práctica y completa."
+        },
+        "rag_evaluation": {
+          "correctness": 0,
+          "completeness": 0,
+          "relevance": 0,
+          "clarity_and_fluency": 0,
+          "alignment_with_intent": 0,
+          "justification": "La respuesta del sistema RAG afirma explícitamente que no puede responder a la pregunta debido a la falta de información en los fragmentos proporcionados, lo que según las instrucciones del evaluador, exige asignar una puntuación de 0 en todos los criterios."
+        }
+      }
+    },
+    {
+      "original_index": 51,
+      "question": "Buenas tardes: Hemos vacunado a un chico de 16 años de la Hepatitis A. Pesa 86 kg y mide 178cm . Le hemos puesto VAQTA 50, sin darnos cuenta q el prospecto la recomienda desde los 18 años. Tenemos que hacer algo?Qué dosis sería la recomendada por su complexión? Cuál sería la segunda dosis? Muchas gracias. Un saludo.",
+      "human_answer": "Aunque se haya cometido este error, no es esperable ningún efecto adverso.\nPara la segunda dosis elijan Vaqta 25 unidades, ya que la ficha técnica habla de edad, no de complexión. \nSaludos\nComité Asesor de Vacunas de la AEP",
+      "rag_answer": "Con la información proporcionada, podemos responder a algunas de tus preguntas:\n\n*   **¿Tenemos que hacer algo?** Dada la edad del chico (16 años), la vacuna VAQTA 50 no debería haber sido administrada ya que el prospecto indica que es para mayores de 18 años. **Deberá consultar con su médico para que evalúe la situación.**\n*   **¿Qué dosis sería la recomendada por su complexión?** La información proporcionada no indica que la dosis de la vacuna se adapte a la complexión o peso del paciente.\n*   **¿Cuál sería la segunda dosis?** No se especifica la pauta de vacunación en los fragmentos proporcionados.\n\n**Enlaces a los capítulos del manual relevantes:**\n\n*   [Capítulo 28. Hepatitis A](https://vacunasaep.org/documentos/manual/cap-28)\n*   [Capítulo 7. Calendarios de inmunización en España](https://vacunasaep.org/documentos/manual/cap-7)",
+      "pipeline_time": 19.030820846557617,
+      "retrieval_time": 1.3838322162628174,
+      "reranking_time": 1.2368507385253906,
+      "generation_time": 2.6784050464630127,
+      "evaluation_time": 13.727227210998535,
+      "total_time": 19.028302907943726,
+      "context_length": 85794,
+      "documents_retrieved": 60,
+      "documents_reranked": 30,
+      "processed_at": "2025-06-20T20:25:41.765909",
+      "evaluation": {
+        "human_evaluation": {
+          "correctness": 5,
+          "completeness": 5,
+          "relevance": 5,
+          "clarity_and_fluency": 5,
+          "alignment_with_intent": 5,
+          "justification": "La respuesta humana es excelente. Proporciona información médica precisa y tranquilizadora sobre el error de dosificación, confirmando que no se esperan efectos adversos. Además, aclara que la complexión no influye en la dosis y especifica correctamente la pauta para la segunda dosis (VAQTA 25), respondiendo a todas las preguntas de manera clara y concisa, y alineada con la autoridad de una fuente experta."
+        },
+        "rag_evaluation": {
+          "correctness": 0,
+          "completeness": 0,
+          "relevance": 0,
+          "clarity_and_fluency": 0,
+          "alignment_with_intent": 0,
+          "justification": "La respuesta RAG admite explícitamente su incapacidad para responder a una de las preguntas clave ('¿Cuál sería la segunda dosis? No se especifica la pauta de vacunación en los fragmentos proporcionados.'). Según las instrucciones, si una respuesta afirma explícitamente que no puede responder debido a 'sin información', 'falta de contexto' o una admisión similar de incapacidad, se deben asignar 0 puntos en los cinco criterios."
+        }
+      }
+    },
+    {
+      "original_index": 124,
+      "question": "Una persona adulta se aplicó la vacuna de sarampión rubéola y parotiditis , pero tomo aciclovir y tuvo reacción como una crisis hipertensiva,estaba contraindicado el medicamento o porque sería.",
+      "human_answer": "Lo lamentamos, pero esta sección de la web del Comité Asesor de Vacunas de la Asociación Española de Pediatría, a la que usted se ha dirigido, únicamente responde a preguntas relacionadas con las vacunaciones infantiles y del embarazo. \nPara preguntas sobre adultos le recomendamos dirigirse al apartado de consultas de la web de la Asociación Española de Vacunología: http://www.vacunas.org/enviar-consulta/\nUn saludo,\nComité Asesor de Vacunas de la AEP",
+      "rag_answer": "Con la información proporcionada, no es posible determinar la causa específica de la crisis hipertensiva tras la administración de la vacuna triple vírica (sarampión, rubéola y parotiditis) y el aciclovir. Los fragmentos no mencionan ninguna interacción directa entre estas vacunas y el aciclovir, ni tampoco explican por qué una crisis hipertensiva podría ser una reacción adversa específica en este contexto.\n\nSin embargo, es importante considerar varios puntos:\n\n*   **Reacciones adversas:** Los fragmentos indican que todas las vacunas pueden tener efectos adversos, aunque la mayoría son leves. Se debe estar atento a la vigilancia poscomercialización para detectar reacciones infrecuentes.\n*   **Contraindicaciones:** En los fragmentos se mencionan contraindicaciones, pero no se especifica que la administración simultánea de la vacuna triple vírica y aciclovir esté contraindicada.\n*   **Precauciones:**  Existen precauciones que se deben considerar, como las relacionadas con enfermedades crónicas o inmunosupresión, pero no se hace mención al aciclovir en relación con estas.\n\nDado que no se proporciona información sobre una posible interacción entre el aciclovir y la vacuna, ni sobre la crisis hipertensiva como efecto adverso específico, no es posible responder a la pregunta de por qué ocurrió esta reacción.\n\n**Capítulos relevantes:**\n\n*   Capítulo 1: Generalidades de las inmunizaciones\n*   Capítulo 3: Seguridad de las inmunizaciones. Contraindicaciones y precauciones",
+      "pipeline_time": 14.403290033340454,
+      "retrieval_time": 1.456301212310791,
+      "reranking_time": 1.2423219680786133,
+      "generation_time": 3.0466229915618896,
+      "evaluation_time": 8.654336929321289,
+      "total_time": 14.400266885757446,
+      "context_length": 90319,
+      "documents_retrieved": 60,
+      "documents_reranked": 30,
+      "processed_at": "2025-06-20T20:25:57.178022",
+      "evaluation": {
+        "human_evaluation": {
+          "correctness": 0,
+          "completeness": 0,
+          "relevance": 0,
+          "clarity_and_fluency": 0,
+          "alignment_with_intent": 0,
+          "justification": "La respuesta humana declara explícitamente que no puede responder a la pregunta debido a que está fuera de su ámbito de competencia (vacunación en adultos), lo que activa la regla de puntuación de 0 para todos los criterios."
+        },
+        "rag_evaluation": {
+          "correctness": 0,
+          "completeness": 0,
+          "relevance": 0,
+          "clarity_and_fluency": 0,
+          "alignment_with_intent": 0,
+          "justification": "La respuesta RAG afirma explícitamente que no es posible determinar la causa o responder a la pregunta debido a la falta de información específica en los fragmentos consultados, lo que activa la regla de puntuación de 0 para todos los criterios."
+        }
+      }
+    },
+    {
+      "original_index": 334,
+      "question": "Niña de 3 años procedente de Venezuela llegada hace poco a nuestro país. La madre acude a la consulta para administrarle las vacunas que corresponden a los 3 años. No aporta informes ni cartilla de vacunaciones (y no tiene posibilidad de conseguirlos), aunque refiere que hasta el momento se lle han administrado todas las vacunas que le tocaban en Venezuela. Se le pueden administrar las vacunas que tocan a los 3 años según nuestro calendario y seguir el nuestro a partir de ahora, o debemos hacer alguna modificación? Muchas gracias",
+      "human_answer": "Existe consenso general en la recomendación de que cuando los niños procedentes de otros países llegan sin documentos en los que se reflejen las vacunas administradas en sus países de origen, la declaración verbal de los padres no debe ser considerada como prueba de vacunación. Puede revisar el tema en el Manual de Vacunas de la AEP. \nPor tanto, le recomendamos que inicie un calendario de vacunación acelerado en esta paciente. Le pueden servir de ayuda las tablas incluidas en este enlace.",
+      "rag_answer": "I apologize, but I'm unable to generate an answer at this moment due to a technical issue: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'The model is overloaded. Please try again later.', 'status': 'UNAVAILABLE'}}",
+      "pipeline_time": 10.539849042892456,
+      "retrieval_time": 0.8716480731964111,
+      "reranking_time": 0.8146090507507324,
+      "generation_time": 1.223149061203003,
+      "evaluation_time": 7.627542018890381,
+      "total_time": 10.537781953811646,
+      "context_length": 187143,
+      "documents_retrieved": 47,
+      "documents_reranked": 30,
+      "processed_at": "2025-06-20T20:26:08.727100",
+      "evaluation": {
+        "human_evaluation": {
+          "correctness": 5,
+          "completeness": 4,
+          "relevance": 5,
+          "clarity_and_fluency": 5,
+          "alignment_with_intent": 5,
+          "justification": "La respuesta humana es factualmente precisa y se alinea con el consenso médico estándar para la vacunación de niños sin historial previo de vacunas. Ofrece una recomendación clara (iniciar calendario acelerado) y remite a fuentes autorizadas (AEP, tablas), lo cual es muy útil. Aunque no detalla el calendario específico, su referencia a recursos lo hace suficientemente completo para una respuesta inicial."
+        },
+        "rag_evaluation": {
+          "correctness": 0,
+          "completeness": 0,
+          "relevance": 0,
+          "clarity_and_fluency": 0,
+          "alignment_with_intent": 0,
+          "justification": "La respuesta RAG indica explícitamente que no puede generar una respuesta debido a un problema técnico ('503 UNAVAILABLE'), lo que se considera una admisión de incapacidad. Por lo tanto, se asigna 0 en todos los criterios según las instrucciones."
+        }
+      }
+    },
+    {
+      "original_index": 34,
+      "question": "Tengo un niño de 6 años que ha estado con LLA-T y con su tto de quimioterapia, el hematólogo ha recomendado dosis de refuerzo de haemophilus influenzae B, meningitis b y algunas más que no tengo dudas, hoy le puse la de neumococo de refuerzo y la de los 6 años de tetraxim, mi pregunta es ¿puedo ponerle una dosis de hexyon dentro de un mes?, la vacuna bexsero con esta edad ¿cuantas dosis le puedo poner? Muchas gracias",
+      "human_answer": "Debe tener en cuenta que tras recibir quimioterapia además de continuar con su calendario, se debe administrar una dosis de refuerzo de todas las vacunas, así pues puede administrar una dosis de Hexion. En relación a la vacuna Bexsero y teniendo en cuanta si edad, le corresponden dos dosis separadas la menos un mes\nUn saludo\nComité de Vacunas.",
+      "rag_answer": "Con la información proporcionada, puedo responder a tus preguntas de la siguiente manera:\n\n*   **Hexyon:** No es posible determinar si puedes poner una dosis de Hexyon dentro de un mes. No hay información específica sobre esta vacuna ni sobre los intervalos de administración en niños con LLA-T y tratamiento de quimioterapia.\n*   **Bexsero:** No se especifica el número de dosis de Bexsero que se pueden poner en niños con LLA-T.\n\nEnlaces de los capítulos relevantes:\n\n*   [14. Inmunizaciones en niños inmunodeprimidos o con tratamiento inmunosupresor](https://vacunasaep.org/documentos/manual/cap-14)\n*   [17. Inmunizaciones en niños con enfermedades crónicas](https://vacunasaep.org/documentos/manual/cap-17)",
+      "pipeline_time": 23.732752084732056,
+      "retrieval_time": 1.2324137687683105,
+      "reranking_time": 1.2734291553497314,
+      "generation_time": 2.2618119716644287,
+      "evaluation_time": 18.96223497390747,
+      "total_time": 23.730512142181396,
+      "context_length": 102667,
+      "documents_retrieved": 60,
+      "documents_reranked": 30,
+      "processed_at": "2025-06-20T20:26:33.464981",
+      "evaluation": {
+        "human_evaluation": {
+          "correctness": 2,
+          "completeness": 1,
+          "relevance": 5,
+          "clarity_and_fluency": 5,
+          "alignment_with_intent": 3,
+          "justification": "La respuesta humana proporciona una respuesta directa a ambas preguntas. Sin embargo, la corrección de la información es cuestionable sin las debidas salvedades para un niño inmunocomprometido en tratamiento de quimioterapia. La omisión más crítica es la de no recomendar consultar al hematólogo/oncólogo tratante, lo cual es esencial en estos casos, haciendo la respuesta incompleta y potencialmente arriesgada. Es clara y relevante, pero su alineación con la intención de proporcionar orientación médica segura para un caso tan delicado es deficiente debido a la falta de matices y precauciones."
+        },
+        "rag_evaluation": {
+          "correctness": 0,
+          "completeness": 0,
+          "relevance": 0,
+          "clarity_and_fluency": 0,
+          "alignment_with_intent": 0,
+          "justification": "La respuesta RAG afirma explícitamente que no es posible determinar la información solicitada debido a la falta de datos específicos ('No es posible determinar', 'No se especifica'), lo que activa la regla de asignar 0 en todos los criterios."
+        }
+      }
+    },
+    {
+      "original_index": 139,
+      "question": "Buenos días Lo primero disculparme por preguntar en estos tiempos de tanto trabajo pasa los sanitarios pero estoy inquieta por la vacunación de mi hija de 3 meses. Tenía cita esta semana para vacunarle de la primera dosis de Bexsero. Llamé al centro de salud pero me dijeron que no se estaban realizando, pero no sé qué profesional me atendió y me he quedado con la duda. ¿Tendría que ponerle esa primera dosis o mejor retrasar? También le pusimos ya la primera dosis de Rotarix, ¿cuándo será la siguiente, a los 4 meses? ¿volverá a pasar lo mismo? Porque ahí creo que tocan otras vacunas que no deben retrasar. Disculpen la avalancha pero no sé qué hacer. Gracias de antemano por todo",
+      "human_answer": "Gracias por su consideración. No conviene retrasar las vacunas en la actual situación y, siempre que sea posible, el CAV de la AEP considera que hay que mantener el calendario (tanto el oficial como las vacunas no financiadas recomendadas), especialmente en los menores de 15 meses (puede consultar este enlace). Le recomendamos que llame para tratar de concertar una cita para garantizar franjas y espacios seguros.\nLa segunda dosis de Rotarix debe ser al menos 4 semanas despues de la primera y, puede tratar de administrarla en la visita de los 4 meses (es compatible con las vacunas a administrar en ese mes).\nEspereamos que le haya sido de utilidad. Un saludo",
+      "rag_answer": "La primera dosis de Bexsero, que es la vacuna contra el meningococo B, se puede administrar a los 2 meses de edad. No se debe retrasar la vacunación, salvo en situaciones excepcionales. Si tu hija tiene 3 meses, debería haber recibido la primera dosis de Bexsero.\n\nEn cuanto a la vacuna Rotarix, la siguiente dosis se administra a los 4 meses.\n\nSi tu hija es prematura, se recomienda vacunar según la edad cronológica, independientemente de la edad gestacional y el peso al nacer.\n\n**Por lo tanto, es importante que tu hija reciba la primera dosis de Bexsero lo antes posible.**\n\nEnlaces relevantes:\n*   [https://vacunasaep.org/documentos/manual/cap-10](https://vacunasaep.org/documentos/manual/cap-10)\n*   [https://vacunasaep.org/documentos/manual/cap-7](https://vacunasaep.org/documentos/manual/cap-7)\n*   [https://vacunasaep.org/documentos/manual/cap-1](https://vacunasaep.org/documentos/manual/cap-1)",
+      "pipeline_time": 6.718519687652588,
+      "retrieval_time": 0.9558179378509521,
+      "reranking_time": 1.3131849765777588,
+      "generation_time": 2.4588961601257324,
+      "evaluation_time": 0.0,
+      "total_time": 6.717680215835571,
+      "context_length": 110798,
+      "documents_retrieved": 60,
+      "documents_reranked": 30,
+      "processed_at": "2025-06-20T20:26:41.192251",
+      "evaluation": {
+        "error": "503 UNAVAILABLE. {'error': {'code': 503, 'message': 'The model is overloaded. Please try again later.', 'status': 'UNAVAILABLE'}}"
+      }
+    },
+    {
+      "original_index": 391,
+      "question": "Buenos días: En Andalucia, a día de hoy, no se financia la vacuna Prevenar y no parece que vaya a entrar en los próximos meses (ya sé que en 2016 entrará pero es un año entero el que lo pueden retrasar). En la actualidad, al preguntarme algunos padres con pocos recursos a los que he recomendado la vacunación con Prevenar y Bexero cual ponen a su hijo si no pueden pagar ambas no he sabido definirme, ¿qué les contesto?. Sé bien la gravedad del menigo pero no sé si al final supera en carga de enfermedad al neumococo. Muchas gracias por vuestra labor.",
+      "human_answer": "Está claro que no supera en carga de enfermedad al neumcococo, pero por otro lado si apareciera está claro que es muy grave.\nDesde este comité no podemos darle una prioridad porque las 2 son recomendadas para todos los niños a partir de los 2 meses y tiene que ser Ud. en consenso con la familia la que debe decidir.\nUn cordial saludo",
+      "rag_answer": "Basándome en los fragmentos proporcionados del Manual de Inmunizaciones de la AEP, no es posible ofrecer una respuesta directa sobre cuál vacuna (Prevenar o Bexsero) priorizar para un niño con pocos recursos en Andalucía, ya que no se proporciona información comparativa sobre la carga de enfermedad entre el neumococo y el meningococo B, ni recomendaciones específicas de priorización en situaciones de recursos limitados.\n\nSin embargo, los fragmentos sí ofrecen información relevante:\n\n*   **Bexsero:** La vacuna contra el meningococo B (Bexsero) está incluida en el calendario sistemático financiado en Andalucía desde 2021-2022 y se recomienda en lactantes con una pauta 2+1 (2, 4 y 12 meses).\n*   **Prevenar 13:** La vacuna antineumocócica (Prevenar 13) se administra en España con una pauta 2+1 a los 2, 4 y 11 meses. No se menciona la financiación de Prevenar en Andalucía en los fragmentos.\n*   **Importancia de ambas vacunas:** El manual enfatiza la importancia de ambas vacunas para la salud infantil. La vacuna antineumocócica previene enfermedades causadas por el neumococo, y la vacuna contra el meningococo B previene la enfermedad meningocócica invasora, que puede ser grave.\n\nDado que ambas vacunas previenen enfermedades graves, y no hay información en los fragmentos que permita determinar cuál es más prioritaria en una situación de recursos limitados, la decisión debe tomarse, idealmente, consultando con el pediatra del niño para evaluar los riesgos individuales y las circunstancias específicas de la familia.\n\nEnlaces de los capítulos del manual que han sido relevantes:\n\n*   [Capítulo 30. Meningococos](https://vacunasaep.org/documentos/manual/cap-30)\n*   [Capítulo 7. Calendarios de inmunización en España](https://vacunasaep.org/documentos/manual/cap-7)\n*   [Capítulo 3. Seguridad de las inmunizaciones. Contraindicaciones y precauciones](https://vacunasaep.org/documentos/manual/cap-3)\n*   [Capítulo 17. Inmunizaciones en niños con enfermedades crónicas](https://vacunasaep.org/documentos/manual/cap-17)\n*   [Capítulo 31. Neumococo](https://vacunasaep.org/documentos/manual/cap-31)",
+      "pipeline_time": 28.588047742843628,
+      "retrieval_time": 1.4858858585357666,
+      "reranking_time": 1.2139110565185547,
+      "generation_time": 3.408928871154785,
+      "evaluation_time": 22.476823091506958,
+      "total_time": 28.585899114608765,
+      "context_length": 136145,
+      "documents_retrieved": 60,
+      "documents_reranked": 30,
+      "processed_at": "2025-06-20T20:27:10.788402",
+      "evaluation": {
+        "human_evaluation": {
+          "correctness": 5,
           "completeness": 3,
           "relevance": 5,
-          "clarity_and_fluency": 4,
+          "clarity_and_fluency": 5,
           "alignment_with_intent": 4,
-          "justification": "The RAG answer correctly cites relevant guidelines regarding varicella vaccination in immunocompromised individuals. It provides more detail than the human answer but ultimately concludes it needs more information, which is a responsible answer given the complexity of the case. The clarity is good, although the repeated mention of 'chapter 14' could be improved.  It directly addresses the intent but stops short of a definitive answer."
+          "justification": "La respuesta humana aborda directamente la duda específica del usuario sobre la carga de enfermedad, ofreciendo una aclaración importante. Aunque no establece una prioridad estricta, explica de manera clara y profesional la postura del comité, devolviendo la responsabilidad de la decisión al profesional, lo cual es un enfoque médico prudente. Es altamente relevante y fácil de entender."
+        },
+        "rag_evaluation": {
+          "correctness": 0,
+          "completeness": 0,
+          "relevance": 0,
+          "clarity_and_fluency": 0,
+          "alignment_with_intent": 0,
+          "justification": "La respuesta RAG afirma explícitamente que no puede ofrecer una respuesta directa sobre la priorización ni la información comparativa de la carga de enfermedad solicitada, lo que activa la regla de asignar 0 en todos los criterios. Adicionalmente, la información proporcionada sobre la financiación de Bexsero (desde 2021-2022) es temporalmente incorrecta para el 'a día de hoy' planteado por el usuario (contexto pre-2016), invalidando la relevancia de su respuesta."
         }
-      },
-      "metrics": {
-        "total_time": 124.02927494049072,
-        "retrieval_time": 94.47246313095093,
-        "reranking_time": 23.474365949630737,
-        "generation_time": 3.6233532428741455,
-        "evaluation_time": 2.4317119121551514,
-        "documents_retrieved": 60,
-        "documents_reranked": 30,
-        "context_length": 88209
-      },
-      "processed_at": "2025-06-12T19:07:41.859782"
+      }
+    },
+    {
+      "original_index": 152,
+      "question": "Niño de 8 años a quien, por error, se le administro dTpa a los 3 años junto a las correspondientes a su edad. No se le administro a los 6 años dTpa: ¿debe administrarselo ahora?. Gracias",
+      "human_answer": "Aunque no lo especifica, suponemos que su paciente llevó una pauta 3+1 con DTPa. Las vacunas Tdpa están indicadas a partir de los 4 años, por lo que la dosis puesta a los 3 años se considera no válida. Por tanto debe recibir ahora una dosis de Tdpa, y la dosis correspondiente de los 14 años posteriormente.\nUn saludo.",
+      "rag_answer": "Con la información proporcionada, se puede responder a tu pregunta.\n\nDado que al niño de 8 años se le administró dTpa a los 3 años y no a los 6, **sí es necesario administrarle dTpa ahora**.\n\nSegún el \"Manual de Inmunizaciones de la AEP\", la vacuna dTpa (componente de difteria, tétanos y tosferina acelular) se administra a los 6 años. Dado que este niño no la recibió a esa edad y tiene 8 años, debe ser vacunado ahora.\n\nEnlaces a los capítulos del manual que han sido relevantes para la respuesta:\n\n*   [Capítulo 11: Calendarios acelerados. Inmunización de rescate en niños y adolescentes con inmunización inadecuada](https://vacunasaep.org/documentos/manual/cap-11)\n*   [Capítulo 7: Calendarios de inmunización en España](https://vacunasaep.org/documentos/manual/cap-7)",
+      "pipeline_time": 30.837465047836304,
+      "retrieval_time": 1.5961887836456299,
+      "reranking_time": 1.3655729293823242,
+      "generation_time": 2.0319128036499023,
+      "evaluation_time": 25.841350078582764,
+      "total_time": 30.83588409423828,
+      "context_length": 186426,
+      "documents_retrieved": 60,
+      "documents_reranked": 30,
+      "processed_at": "2025-06-20T20:27:42.634246",
+      "evaluation": {
+        "human_evaluation": {
+          "correctness": 5,
+          "completeness": 5,
+          "relevance": 5,
+          "clarity_and_fluency": 5,
+          "alignment_with_intent": 5,
+          "justification": "La respuesta humana es excelente. Aclara correctamente la invalidez de la dosis administrada a los 3 años, proporciona una indicación precisa para la administración actual de la vacuna y establece la pauta para futuras dosis. Es una respuesta completa, precisa y directamente relevante, con una redacción profesional y clara que aborda completamente la intención del usuario."
+        },
+        "rag_evaluation": {
+          "correctness": 3,
+          "completeness": 2,
+          "relevance": 4,
+          "clarity_and_fluency": 5,
+          "alignment_with_intent": 3,
+          "justification": "La respuesta RAG es clara y responde afirmativamente a la pregunta principal sobre la necesidad de administrar la vacuna ahora. Sin embargo, su principal debilidad radica en no abordar la validez de la dosis administrada a los 3 años, lo cual es un factor crítico en el escenario planteado. Esto la hace incompleta, menos precisa en su justificación y no tan alineada con la intención específica de la consulta, aunque la redacción es fluida y los enlaces proporcionados son relevantes."
+        }
+      }
+    },
+    {
+      "original_index": 406,
+      "question": "Buenas tardes, administrando las vacunas de los 4 meses a 1 niño, al ir a ponerle la vacuna de la meningitis C ,tras pincharle e ir a inyectar se ha soltado la aguja de la jeringa y a simple visto estimo que se ha salido la mayor parte de la vacuna fuera , pero no puedo asegurar cuanta dosis ha entrado y cuanta no. No he reconsiderado la opción de repetirle otra en el momento ya que como digo no se cuanto le habrá entrado. ¿Qué debo hacer? Imagino que revacunarle y en cuanto tiempo podría hacerlo? Gracias Un saludo",
+      "human_answer": "Si considera que la mayor parte de la vacuna no ha sido administrada, debería haber puesto una nueva dosis en el mismo momento. \nDebe revacunar al niño, pero tras un intervalo de 2 meses. Sólo en el caso de que tenga seguridad de que no entró nada o casi nada del contenido, podría administrar la vacuna ya.\nUn saludo",
+      "rag_answer": "La información disponible no proporciona una respuesta directa sobre qué hacer exactamente cuando se suelta la aguja y se pierde la mayor parte de la vacuna de la meningitis C. Sin embargo, los siguientes puntos del manual son relevantes para la situación:\n\n*   **Administración parenteral incompleta:** Si se produce una administración parenteral incompleta, y hay una pérdida sustancial de la vacuna, se debe repetir una dosis completa lo antes posible.  ([https://vacunasaep.org/documentos/manual/cap-5](https://vacunasaep.org/documentos/manual/cap-5))\n*   **Niño incorrectamente inmunizado:** Es crucial respetar los intervalos mínimos entre las dosis para asegurar una adecuada respuesta inmunológica. ([https://vacunasaep.org/documentos/manual/cap-11](https://vacunasaep.org/documentos/manual/cap-11))\n*   **Recomendaciones para no desaprovechar oportunidades de vacunación:**  Se debe investigar la situación inmunitaria del niño y administrar las vacunas necesarias, teniendo en cuenta las dosis previas y los intervalos. ([https://vacunasaep.org/documentos/manual/cap-11](https://vacunasaep.org/documentos/manual/cap-11))\n\n**Por lo tanto, ante esta situación, se recomienda:**\n\n1.  **Repetir la dosis:** Debido a la pérdida de la vacuna, y según la información, se debe repetir una dosis completa.\n2.  **Intervalo entre dosis:** Deberá tenerse en cuenta los intervalos mínimos entre dosis para asegurar la correcta inmunización del niño.\n3.  **Consultar las tablas de rescate:** Utilizar las tablas de rescate o vacunación acelerada del manual (Capítulo 11) para guiar el calendario de vacunación.\n\nDado que el manual no especifica el intervalo entre dosis en estos casos, se sugiere consultar las tablas de vacunación o las recomendaciones del fabricante de la vacuna para determinar el tiempo adecuado para la revacunación.\n\n**Enlaces de los capítulos relevantes:**\n\n*   [https://vacunasaep.org/documentos/manual/cap-5](https://vacunasaep.org/documentos/manual/cap-5)\n*   [https://vacunasaep.org/documentos/manual/cap-11](https://vacunasaep.org/documentos/manual/cap-11)",
+      "pipeline_time": 13.528776168823242,
+      "retrieval_time": 1.340956211090088,
+      "reranking_time": 1.2590689659118652,
+      "generation_time": 3.351574182510376,
+      "evaluation_time": 0.0,
+      "total_time": 13.52662992477417,
+      "context_length": 136337,
+      "documents_retrieved": 60,
+      "documents_reranked": 30,
+      "processed_at": "2025-06-20T20:27:57.169385",
+      "evaluation": {
+        "error": "503 UNAVAILABLE. {'error': {'code': 503, 'message': 'The model is overloaded. Please try again later.', 'status': 'UNAVAILABLE'}}"
+      }
+    },
+    {
+      "original_index": 465,
+      "question": "Buenas tardes, se trata de un niño de 4 años de edad. Se vacunó en primavera con 2ª dosis de TV (adelantada por indicación de autoridades sanitarias por brote de sarampión). Al poco tiempo, en junio, presentó púrpura de Schonlein-Henoch, ahora asintomático, sigue con revisiones. Está pendiente de 2ª dosis de vacuna de varicela, no hay ninguna contraindicación? Gracias",
+      "human_answer": "La relación entre las vacunas como desencadenantes de brotes de Púrpura de Shönlein-Henoch (PSH) no está aclarada y es difícil de confirmar. Siendo una enfermedad con un componente autoinmune, potencialmente los estímulos de la inmunidad pueden actuar como disparadores del proceso. Se han descrito casos asociados temporalmente a la vacunación con vacuna triple vírica, gripe, meningococo, fiebre amarilla, cólera, etc. Pero también se ha visto asociación es entre casos de la varicela natural, gripe y otras muchas infecciones, y posterior PSH.\nLas vacunas deben posponerse durante el periodo en que la enfermedad este activa. Si la paciente ya ha sido dado de alta, puede vacunarla sin problemas. En general, las vacunas no parecen aumentar la actividad de la enfermedad y no provocan acontecimientos adversos graves. Además, recuerde que el riesgo de recidiva es menor que el beneficio de protegerla frente a la varicela. Por lo que puede administrar la segunda dosis.\nUn cordial saludo",
+      "rag_answer": "En el caso del niño de 4 años con púrpura de Schonlein-Henoch (asintomático y en revisión) que requiere la segunda dosis de la vacuna de varicela, la información proporcionada indica lo siguiente:\n\n*   **No hay una contraindicación específica** para la vacuna de la varicela debido a la púrpura de Schönlein-Henoch, siempre y cuando el niño esté asintomático y bajo control médico.\n*   Se recomienda la vacunación frente a la varicela en niños con enfermedades crónicas, con 2 dosis, a partir de los 12 meses de edad. El intervalo mínimo entre dosis es de 4 semanas, aunque se recomienda, en menores de 13 años, un intervalo de, al menos, 3 meses.\n*   Es fundamental evaluar la situación inmunológica frente a la varicela y si no existe antecedente de haber parecido la enfermedad o de vacunación previa con 2 dosis, siempre que no exista contraindicación, proceder a vacunar.\n\nEnlaces a los capítulos relevantes:\n\n*   [Capítulo 17. Inmunizaciones en niños con enfermedades crónicas](https://vacunasaep.org/documentos/manual/cap-17)\n*   [Capítulo 41. Varicela](https://vacunasaep.org/documentos/manual/cap-41)\n*   [Capítulo 3. Seguridad de las inmunizaciones. Contraindicaciones y precauciones](https://vacunasaep.org/documentos/manual/cap-3)\n*   [Capítulo 11. Calendarios acelerados. Inmunización de rescate en niños y adolescentes con inmunización inadecuada](https://vacunasaep.org/documentos/manual/cap-11)",
+      "pipeline_time": 17.243932008743286,
+      "retrieval_time": 1.7556910514831543,
+      "reranking_time": 1.2716658115386963,
+      "generation_time": 2.5374457836151123,
+      "evaluation_time": 11.677020072937012,
+      "total_time": 17.242542028427124,
+      "context_length": 164345,
+      "documents_retrieved": 60,
+      "documents_reranked": 30,
+      "processed_at": "2025-06-20T20:28:15.419523",
+      "evaluation": {
+        "human_evaluation": {
+          "correctness": 5,
+          "completeness": 5,
+          "relevance": 5,
+          "clarity_and_fluency": 5,
+          "alignment_with_intent": 5
+        },
+        "rag_evaluation": {
+          "correctness": 5,
+          "completeness": 4,
+          "relevance": 5,
+          "clarity_and_fluency": 5,
+          "alignment_with_intent": 5
+        }
+      }
+    },
+    {
+      "original_index": 403,
+      "question": "Buenas tarde soy medico no especialista, quisiera saber como puedo adquirir la vacuna de BCG para mis pacientes, saber si es posinle",
+      "human_answer": "Desde hace un tiempo, existe desabastecimiento de vacunas BCG. Esto se ha acentuado e incrementado ante la pandemia COVID. Es por ello que las autoridades de países donde la vacunación es necesaria, se han hecho con la adquisición de todos los lotes que se compran para así poder dar servicio público y que reciban las vacunas aquellos más vulnerables y que necesitan su aplicación.\nNo podemos decirle nada mas al respecto. Para poder tener más información puede preguntar en su país como está desarrollándose esta situación y que se tiene previsto para solventar su necesidad.\nUn saludo\nComité Asesor de Vacunas.",
+      "rag_answer": "Según la información proporcionada en los fragmentos, las vacunas están legalmente catalogadas como medicamentos especiales y, por lo tanto, están sujetas a prescripción médica (Capítulo 46). Las vacunas no financiadas precisan de receta médica normalizada, ya sea oficial o privada (Capítulo 46). Las vacunas de calendario y las campañas vacunales son competencia de enfermería, bastando con su orden de dispensación, salvo en aquellos casos en los que un paciente, en atención a sus condiciones particulares, precise de una valoración médica individualizada (Capítulo 46).\n\nEl farmacéutico no puede sustituir la vacuna indicada por el médico sin su autorización (Capítulo 46). Las vacunas deben prescribirse obligatoriamente por denominación comercial (Capítulo 46).\n\nEn resumen, para adquirir la vacuna BCG para tus pacientes, siendo médico no especialista, necesitarás una receta médica, ya que se trata de una vacuna que requiere prescripción médica.\n\nEnlaces a los capítulos del manual relevantes para la respuesta:\n\n*   [46. Aspectos legales de las inmunizaciones](https://vacunasaep.org/documentos/manual/cap-46)",
+      "pipeline_time": 24.859717845916748,
+      "retrieval_time": 1.912564992904663,
+      "reranking_time": 1.190744161605835,
+      "generation_time": 2.476327896118164,
+      "evaluation_time": 19.275080919265747,
+      "total_time": 24.856494903564453,
+      "context_length": 152578,
+      "documents_retrieved": 60,
+      "documents_reranked": 30,
+      "processed_at": "2025-06-20T20:28:41.289528",
+      "evaluation": {
+        "human_evaluation": {
+          "correctness": 4,
+          "completeness": 2,
+          "relevance": 4,
+          "clarity_and_fluency": 5,
+          "alignment_with_intent": 3,
+          "justification": "La respuesta humana es factualmente plausible al abordar la escasez de la vacuna BCG, un problema real. Sin embargo, aunque explica el 'por qué' de la dificultad, es incompleta en el 'cómo' adquirirla, limitándose a sugerir contacto con autoridades locales. Es muy relevante para el contexto de la pregunta y está excelentemente redactada. Su alineación es parcial, ya que aborda la posibilidad de adquisición pero no proporciona una solución concreta."
+        },
+        "rag_evaluation": {
+          "correctness": 3,
+          "completeness": 1,
+          "relevance": 2,
+          "clarity_and_fluency": 5,
+          "alignment_with_intent": 2,
+          "justification": "La respuesta RAG proporciona información legalmente correcta sobre la prescripción de vacunas en general, pero es gravemente incompleta y poco relevante para la pregunta específica al omitir por completo el desabastecimiento conocido de la vacuna BCG, lo cual es el factor crítico para su adquisición. Aunque su claridad y fluidez son excelentes, su alineación con la intención es baja porque la solución que propone (obtener una receta) es insuficiente y engañosa en la práctica debido a los problemas de suministro no mencionados."
+        }
+      }
+    },
+    {
+      "original_index": 302,
+      "question": "Buenas tardes, mi consulta es referente a un retraso en la vacunación de los 12 meses (anti-meningococo C y triple vírica), en un niño que asiste a guardería. Tanto el médico como el enfermero refieren que no se le puede poner cuando le corresponde por problemas de agenda y que habría que retrasarla unas 3 semanas, aunque me comentan que no hay ningún problema. Realmente es así, es decir, no habría mayor problema en retrasarla o lo mejor es administrarla en la fecha que le correspondería, puesto que además acude a guardería? Gracias de antemano por su respuesta.",
+      "human_answer": "Es siempre recomendable ajustarse a la edad de vacunación establecida en los calendarios, aunque es bien cierto que la demora de solo 3 semanas en las vacunas del año de edad no constituye un riesgo relevante, pues en todos estos casos son enfermedades de muy baja incidencia (sarampión, rubeola, parotiditis y meningococo C) en nuestro entorno.\nUn saludo,",
+      "rag_answer": "En cuanto al retraso en la vacunación de los 12 meses (anti-meningococo C y triple vírica) en un niño que asiste a guardería, la información proporcionada indica lo siguiente:\n\n*   **No hay una respuesta definitiva en los fragmentos sobre si es o no problemático retrasar las vacunas**. Sin embargo, se puede inferir que, en general, es preferible administrar las vacunas en la fecha recomendada por el calendario.\n*   En el contexto del calendario de vacunación español, las vacunas anti-meningococo C y triple vírica están programadas a los 12 meses (7).\n*   Los niños con enfermedades crónicas deben cumplir con calendarios de vacunación optimizados, ya que presentan mayor riesgo de padecer formas graves de las enfermedades inmunoprevenibles. Lo ideal es cumplir con la vacunación en los tiempos recomendados (17).\n*   Dado que el niño asiste a guardería, se encuentra en un entorno donde puede haber mayor exposición a enfermedades infecciosas.\n*   Se recomienda valorar la situación individual del niño y, si fuera posible, administrar las vacunas lo antes posible, de acuerdo con las recomendaciones de la AEP (11).\n\n**En resumen**: Aunque los fragmentos no indican explícitamente que retrasar las vacunas sea un problema, sí enfatizan la importancia de seguir el calendario de vacunación recomendado, especialmente en niños que asisten a guardería y/o que puedan tener un mayor riesgo de exposición a enfermedades. Por lo tanto, **la recomendación general sería administrar las vacunas en la fecha que les corresponde**, a menos que exista una razón médica específica que justifique el retraso.\n\nEnlaces de los capítulos relevantes:\n\n*   [7. Calendarios de inmunización en España](https://vacunasaep.org/documentos/manual/cap-7)\n*   [11. Calendarios acelerados. Inmunización de rescate en niños y adolescentes con inmunización inadecuada](https://vacunasaep.org/documentos/manual/cap-11)\n*   [17. Inmunizaciones en niños con enfermedades crónicas](https://vacunasaep.org/documentos/manual/cap-17)",
+      "pipeline_time": 20.303707122802734,
+      "retrieval_time": 0.9145348072052002,
+      "reranking_time": 1.1024889945983887,
+      "generation_time": 3.0476977825164795,
+      "evaluation_time": 15.235239267349243,
+      "total_time": 20.300909996032715,
+      "context_length": 217085,
+      "documents_retrieved": 45,
+      "documents_reranked": 30,
+      "processed_at": "2025-06-20T20:29:02.601858",
+      "evaluation": {
+        "human_evaluation": {
+          "correctness": 5,
+          "completeness": 4,
+          "relevance": 5,
+          "clarity_and_fluency": 5,
+          "alignment_with_intent": 5,
+          "justification": "La respuesta humana es factualmente precisa al reconocer la baja incidencia de estas enfermedades en el entorno actual, lo que valida la afirmación de los profesionales de la salud. Es concisa, clara y directa al grano, abordando la preocupación principal del usuario sobre el riesgo de un retraso de 3 semanas. Aunque no aborda explícitamente el factor de la guardería en detalle, la explicación sobre la baja incidencia de las enfermedades implicadas es suficiente para cubrir indirectamente esa preocupación."
+        },
+        "rag_evaluation": {
+          "correctness": 3,
+          "completeness": 3,
+          "relevance": 4,
+          "clarity_and_fluency": 3,
+          "alignment_with_intent": 2,
+          "justification": "La respuesta RAG ofrece información general correcta sobre la importancia de seguir el calendario de vacunación y el factor de la guardería. Sin embargo, su principal debilidad radica en no abordar directamente la especificidad de la pregunta: si *este* retraso de 3 semanas para *estas* vacunas es problemático, como le dijeron los profesionales. En lugar de ello, se centra en la importancia general de la vacunación a tiempo y la importancia de la situación individual. La inclusión de un punto sobre enfermedades crónicas es menos relevante. La mención repetida de 'los fragmentos' y la ambigüedad inicial ('no hay una respuesta definitiva') restan profesionalismo y claridad, y en última instancia, no valida ni refuta de manera útil la información que el usuario ya recibió de su médico/enfermero, que era la esencia de su consulta."
+        }
+      }
     }
   ]
 }

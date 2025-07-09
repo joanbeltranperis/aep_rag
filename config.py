@@ -15,7 +15,18 @@ class RagConfig:
     def __init__(self):
         # Core models
         self.embedding_model = "paraphrase-multilingual-MiniLM-L12-v2"
-        self.generative_model_name = "gemini-2.0-flash-lite"
+
+        # Separate models for generation and evaluation
+        self.generation_model_name = (
+            "gemini-2.0-flash-lite"  # Fast model for generation
+        )
+        self.evaluation_model_name = (
+            "gemini-2.5-flash"  # More powerful model for evaluation
+        )
+
+        # Legacy support - will use generation_model_name
+        self.generative_model_name = self.generation_model_name
+
         self.reranker_model_name = "cross-encoder/ms-marco-MiniLM-L-6-v2"
 
         # File paths
@@ -57,8 +68,8 @@ class RagConfig:
             print(colored("\nModel Initialization", "blue"))
             print(colored("=" * 40, "blue"))
 
-        # Initialize generative model client and model
-        self._initialize_generative_model()
+        # Initialize generative model client and models
+        self._initialize_generative_models()
 
         # Initialize embedding model
         self._initialize_embedding_model()
@@ -69,8 +80,8 @@ class RagConfig:
         if self.debug_mode:
             print(colored("All models initialized successfully", "green"))
 
-    def _initialize_generative_model(self):
-        """Initialize generative model client and model."""
+    def _initialize_generative_models(self):
+        """Initialize generative model client and both generation/evaluation models."""
         if self.debug_mode:
             print(colored("Initializing generative model client...", "blue"))
 
@@ -86,16 +97,39 @@ class RagConfig:
             if self.debug_mode:
                 print(colored("Generative model client initialized", "blue"))
 
+            # Initialize generation model
             if self.debug_mode:
-                print(colored("Loading generative model...", "blue"))
-            self.generative_model = self.client.models.get(
-                model=self.generative_model_name
+                print(
+                    colored(
+                        f"Loading generation model: {self.generation_model_name}...",
+                        "blue",
+                    )
+                )
+            self.generation_model = self.client.models.get(
+                model=self.generation_model_name
             )
             if self.debug_mode:
-                print(colored("Generative model loaded", "blue"))
+                print(colored("Generation model loaded", "blue"))
+
+            # Initialize evaluation model
+            if self.debug_mode:
+                print(
+                    colored(
+                        f"Loading evaluation model: {self.evaluation_model_name}...",
+                        "blue",
+                    )
+                )
+            self.evaluation_model = self.client.models.get(
+                model=self.evaluation_model_name
+            )
+            if self.debug_mode:
+                print(colored("Evaluation model loaded", "blue"))
+
+            # Legacy support
+            self.generative_model = self.generation_model
 
         except Exception as e:
-            print(colored(f"Error initializing generative model: {str(e)}", "red"))
+            print(colored(f"Error initializing generative models: {str(e)}", "red"))
             raise
 
     def _initialize_embedding_model(self):
@@ -213,16 +247,48 @@ class RagConfig:
         if separators is not None:
             self.separators = separators
 
+    def set_generation_model(self, model_name: str):
+        """Set the generation model to use."""
+        self.generation_model_name = model_name
+        self.generative_model_name = model_name  # For backward compatibility
+        # Reinitialize the generation model
+        try:
+            self.generation_model = self.client.models.get(model=model_name)
+            self.generative_model = self.generation_model  # For backward compatibility
+            if self.debug_mode:
+                print(colored(f"Generation model updated to: {model_name}", "green"))
+        except Exception as e:
+            print(colored(f"Error setting generation model: {str(e)}", "red"))
+            raise
+
+    def set_evaluation_model(self, model_name: str):
+        """Set the evaluation model to use."""
+        self.evaluation_model_name = model_name
+        # Reinitialize the evaluation model
+        try:
+            self.evaluation_model = self.client.models.get(model=model_name)
+            if self.debug_mode:
+                print(colored(f"Evaluation model updated to: {model_name}", "green"))
+        except Exception as e:
+            print(colored(f"Error setting evaluation model: {str(e)}", "red"))
+            raise
+
     def show_model_status(self):
         """Show model initialization status (called when debug mode is enabled)."""
         print(colored("\nModel Initialization Status", "blue"))
-        print(colored("=" * 40, "blue"))
+        print(colored("=" * 50, "blue"))
 
-        # Generative model status
-        if hasattr(self, "client") and hasattr(self, "generative_model"):
-            print(colored(f"✓ Generative model: {self.generative_model_name}", "green"))
+        # Generation model status
+        if hasattr(self, "client") and hasattr(self, "generation_model"):
+            print(colored(f"✓ Generation model: {self.generation_model_name}", "green"))
         else:
-            print(colored("✗ Generative model: Not initialized", "red"))
+            print(colored("✗ Generation model: Not initialized", "red"))
+
+        # Evaluation model status
+        if hasattr(self, "evaluation_model"):
+            print(colored(f"✓ Evaluation model: {self.evaluation_model_name}", "green"))
+        else:
+            print(colored("✗ Evaluation model: Not initialized", "red"))
 
         # Embedding model status
         if hasattr(self, "embedding_model_instance"):
@@ -236,7 +302,7 @@ class RagConfig:
         else:
             print(colored("✗ Reranker model: Not initialized", "red"))
 
-        print(colored("All models initialized successfully", "green"))
+        print(colored("Model configuration complete", "green"))
 
 
 def debug_log(debug_data: dict[str, Any]) -> None:

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import argparse
 import json
 import random
 import time
@@ -11,23 +12,23 @@ from termcolor import colored
 
 from config import RagConfig
 from pipeline import RAGPipeline
-from utils import load_documents, load_questions
+from utils import load_documents_and_vector_store, load_questions
 
 
-class BatchEvaluator:
+class BatchProcessor:
     def __init__(self, config: RagConfig):
         self.config = config
         self.pipeline = RAGPipeline(config)
-        self.documents, self.vector_store = load_documents(config)
+        self.documents, self.vector_store = load_documents_and_vector_store(config)
 
-    def evaluate_random_questions(
+    def process_random_questions(
         self,
         questions_file: str = "questions.json",
-        output_file: str = "batch_evaluation_results.json",
+        output_file: str = "batch_processing_results.json",
         num_questions: int = 10,
         delay_between_questions: float = 2.0,
     ):
-        print(colored("Starting Batch Evaluation", "green"))
+        print(colored("Starting Batch Processing", "green"))
         print(f"Input file: {questions_file}")
         print(f"Output file: {output_file}")
         print(f"Target questions: {num_questions}")
@@ -66,7 +67,7 @@ class BatchEvaluator:
         }
 
         print(f"Selected {num_questions} random questions to process")
-        print(f"Starting evaluation at {datetime.now().strftime('%H:%M:%S')}")
+        print(f"Starting processing at {datetime.now().strftime('%H:%M:%S')}")
 
         # Process each question
         start_time = time.time()
@@ -157,7 +158,7 @@ class BatchEvaluator:
 
         # Final summary
         total_time = time.time() - start_time
-        print(colored("Batch Evaluation Completed!", "green"))
+        print(colored("Batch Processing Completed!", "green"))
         print(f"Total time: {total_time / 60:.1f} minutes")
         print(f"Successful: {success_count}")
         print(f"Errors: {error_count}")
@@ -174,80 +175,51 @@ class BatchEvaluator:
         with open(output_path, "w", encoding="utf-8") as f:
             json.dump(results, f, indent=2, ensure_ascii=False)
 
-    def analyze_results(self, results_file: str = "batch_evaluation_results.json"):
-        """Analyze results from a batch evaluation."""
-        try:
-            with open(results_file, "r", encoding="utf-8") as f:
-                data = json.load(f)
-                
-            print(colored("Batch Evaluation Analysis", "green"))
-            print("=" * 60)
-            
-            metadata = data.get("metadata", {})
-            results = data.get("results", [])
-            
-            # Basic statistics
-            total_questions = metadata.get("total_questions", len(results))
-            successful = metadata.get("successful", 0)
-            errors = metadata.get("errors", 0)
-            total_time = metadata.get("total_time_minutes", 0)
-            
-            print(f"Total questions: {total_questions}")
-            print(f"Successful: {successful}")
-            print(f"Errors: {errors}")
-            print(f"Success rate: {(successful/total_questions)*100:.1f}%")
-            print(f"Total time: {total_time:.1f} minutes")
-            print(f"Average time per question: {(total_time*60/total_questions):.1f}s")
-            
-            # Performance metrics
-            if successful > 0:
-                valid_results = [r for r in results if "error" not in r]
-                if valid_results:
-                    avg_retrieval = sum(r.get("retrieval_time", 0) for r in valid_results) / len(valid_results)
-                    avg_generation = sum(r.get("generation_time", 0) for r in valid_results) / len(valid_results)
-                    avg_total = sum(r.get("total_time", 0) for r in valid_results) / len(valid_results)
-                    
-                    print(f"\nAverage Performance:")
-                    print(f"Retrieval: {avg_retrieval:.2f}s")
-                    print(f"Generation: {avg_generation:.2f}s")
-                    print(f"Total: {avg_total:.2f}s")
-                    
-                    # Document metrics
-                    avg_docs_retrieved = sum(r.get("documents_retrieved", 0) for r in valid_results) / len(valid_results)
-                    avg_docs_reranked = sum(r.get("documents_reranked", 0) for r in valid_results) / len(valid_results)
-                    avg_context_length = sum(r.get("context_length", 0) for r in valid_results) / len(valid_results)
-                    
-                    print(f"\nDocument Metrics:")
-                    print(f"Documents retrieved: {avg_docs_retrieved:.1f}")
-                    print(f"Documents reranked: {avg_docs_reranked:.1f}")
-                    print(f"Context length: {avg_context_length:,.0f} chars")
-            
-        except FileNotFoundError:
-            print(colored(f"Results file '{results_file}' not found", "red"))
-        except json.JSONDecodeError:
-            print(colored(f"Invalid JSON in results file '{results_file}'", "red"))
-        except Exception as e:
-            print(colored(f"Error analyzing results: {str(e)}", "red"))
-
 
 def main():
     """Main function for batch evaluation."""
+    parser = argparse.ArgumentParser(description="Run batch processing on random questions")
+    parser.add_argument(
+        "--num-questions", "-n",
+        type=int,
+        default=5,
+        help="Number of questions to process (default: 5)"
+    )
+    parser.add_argument(
+        "--input-file", "-i",
+        default="questions.json",
+        help="Input questions file (default: questions.json)"
+    )
+    parser.add_argument(
+        "--output-file", "-o",
+        default="batch_evaluation_results.json",
+        help="Output results file (default: batch_evaluation_results.json)"
+    )
+    parser.add_argument(
+        "--delay", "-d",
+        type=float,
+        default=1.0,
+        help="Delay between questions in seconds (default: 1.0)"
+    )
+
+    
+    args = parser.parse_args()
+    
     config = RagConfig()
     
     # Set up for evaluation mode
     config.enable_evaluation = True
     config.log_stats = False  # Reduce verbosity for batch processing
     
-    evaluator = BatchEvaluator(config)
+    processor = BatchProcessor(config)
     
     # Run batch evaluation
-    evaluator.evaluate_random_questions(
-        num_questions=5,  # Adjust as needed
-        delay_between_questions=1.0,
+    processor.process_random_questions(
+        questions_file=args.input_file,
+        output_file=args.output_file,
+        num_questions=args.num_questions,
+        delay_between_questions=args.delay,
     )
-    
-    # Analyze results
-    evaluator.analyze_results()
 
 
 if __name__ == "__main__":

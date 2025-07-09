@@ -13,6 +13,7 @@ dependencies = [
     "langchain-community>=0.3.21",
     "langchain-google-genai>=2.0.10",
     "langchain-huggingface>=0.1.2",
+    "lxml>=6.0.0",
     "matplotlib>=3.10.1",
     "pandas>=2.2.3",
     "python-dotenv>=1.1.0",
