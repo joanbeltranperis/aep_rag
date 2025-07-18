@@ -1,12 +1,9 @@
-#!/usr/bin/env python3
-
 import argparse
 import json
 import random
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional
 
 from termcolor import colored
 
@@ -35,7 +32,6 @@ class BatchProcessor:
         print(f"Delay between questions: {delay_between_questions}s")
         print(f"Configuration: {self.config.get_active_components()}")
 
-        # Load questions
         try:
             questions_data = load_questions(questions_file)
             all_questions = questions_data.get("questions", [])
@@ -50,12 +46,17 @@ class BatchProcessor:
 
         if num_questions > len(all_questions):
             num_questions = len(all_questions)
-            print(colored(f"Requested more questions than available, processing all {num_questions}", "yellow"))
+            print(
+                colored(
+                    f"Requested more questions than available, processing all {num_questions}",
+                    "yellow",
+                )
+            )
 
-        # Select random questions
+        random.seed(70)
         selected_indices = random.sample(range(len(all_questions)), num_questions)
+        print(f"Selected indices: {selected_indices}")
 
-        # Initialize results
         results = {
             "metadata": {
                 "created_at": datetime.now().isoformat(),
@@ -69,7 +70,6 @@ class BatchProcessor:
         print(f"Selected {num_questions} random questions to process")
         print(f"Starting processing at {datetime.now().strftime('%H:%M:%S')}")
 
-        # Process each question
         start_time = time.time()
         success_count = 0
         error_count = 0
@@ -79,11 +79,15 @@ class BatchProcessor:
             question = question_data.get("question", "")
             human_answer = question_data.get("human_answer", {}).get("content", "")
 
-            print(colored(f"Processing question {i}/{num_questions} (index {question_idx})", "blue"))
+            print(
+                colored(
+                    f"Processing question {i}/{num_questions} (index {question_idx})",
+                    "blue",
+                )
+            )
             print(f"Question: {question[:100]}...")
 
             try:
-                # Process through pipeline
                 pipeline_start = time.time()
                 result = self.pipeline.process(
                     question=question,
@@ -93,7 +97,6 @@ class BatchProcessor:
                 )
                 pipeline_time = time.time() - pipeline_start
 
-                # Prepare detailed result
                 detailed_result = {
                     "original_index": question_idx,
                     "question": question,
@@ -111,23 +114,22 @@ class BatchProcessor:
                     "processed_at": datetime.now().isoformat(),
                 }
 
-                # Add evaluation results if available
                 if "evaluation" in result and result["evaluation"]:
                     detailed_result["evaluation"] = result["evaluation"]
 
                 results["results"].append(detailed_result)
                 success_count += 1
 
-                print(colored(f"Completed successfully in {pipeline_time:.2f}s", "green"))
+                print(
+                    colored(f"Completed successfully in {pipeline_time:.2f}s", "green")
+                )
 
-                # Save intermediate results
                 output_path = Path(output_file)
                 with open(output_path, "w", encoding="utf-8") as f:
                     json.dump(results, f, indent=2, ensure_ascii=False)
 
                 print(colored(f"Results saved to {output_file}", "green"))
 
-                # Add delay between questions (except for the last one)
                 if i < num_questions:
                     print(f"Waiting {delay_between_questions}s before next question...")
                     time.sleep(delay_between_questions)
@@ -136,7 +138,6 @@ class BatchProcessor:
                 error_count += 1
                 print(colored(f"Error processing question {i}: {str(e)}", "red"))
 
-                # Save error info
                 error_data = {
                     "original_index": question_idx,
                     "question": question,
@@ -145,18 +146,15 @@ class BatchProcessor:
                 }
                 results["results"].append(error_data)
 
-                # Save even errors
                 output_path = Path(output_file)
                 with open(output_path, "w", encoding="utf-8") as f:
                     json.dump(results, f, indent=2, ensure_ascii=False)
 
-                # Also add delay after errors to avoid rate limiting
                 print(f"Waiting {delay_between_questions}s before next question...")
                 time.sleep(delay_between_questions)
 
                 continue
 
-        # Final summary
         total_time = time.time() - start_time
         print(colored("Batch Processing Completed!", "green"))
         print(f"Total time: {total_time / 60:.1f} minutes")
@@ -164,13 +162,11 @@ class BatchProcessor:
         print(f"Errors: {error_count}")
         print(f"Results saved to: {output_file}")
 
-        # Update metadata
         results["metadata"]["completed_at"] = datetime.now().isoformat()
         results["metadata"]["successful"] = success_count
         results["metadata"]["errors"] = error_count
         results["metadata"]["total_time_minutes"] = total_time / 60
 
-        # Final save with metadata
         output_path = Path(output_file)
         with open(output_path, "w", encoding="utf-8") as f:
             json.dump(results, f, indent=2, ensure_ascii=False)
@@ -178,42 +174,49 @@ class BatchProcessor:
 
 def main():
     """Main function for batch evaluation."""
-    parser = argparse.ArgumentParser(description="Run batch processing on random questions")
+    parser = argparse.ArgumentParser(
+        description="Run batch processing on random questions"
+    )
     parser.add_argument(
-        "--num-questions", "-n",
+        "--num-questions",
+        "-n",
         type=int,
         default=5,
-        help="Number of questions to process (default: 5)"
+        help="Number of questions to process (default: 5)",
     )
     parser.add_argument(
-        "--input-file", "-i",
+        "--input-file",
+        "-i",
         default="questions.json",
-        help="Input questions file (default: questions.json)"
+        help="Input questions file (default: questions.json)",
     )
     parser.add_argument(
-        "--output-file", "-o",
+        "--output-file",
+        "-o",
         default="batch_evaluation_results.json",
-        help="Output results file (default: batch_evaluation_results.json)"
+        help="Output results file (default: batch_evaluation_results.json)",
     )
     parser.add_argument(
-        "--delay", "-d",
+        "--delay",
+        "-d",
         type=float,
         default=1.0,
-        help="Delay between questions in seconds (default: 1.0)"
+        help="Delay between questions in seconds (default: 1.0)",
     )
 
-    
     args = parser.parse_args()
-    
+
     config = RagConfig()
-    
-    # Set up for evaluation mode
+    config.basic_setup()
+
     config.enable_evaluation = True
-    config.log_stats = False  # Reduce verbosity for batch processing
-    
+    config.use_chapter_filtering = True
+    config.use_text_splitter = True
+    config.use_reranker = True
+    config.log_stats = False
+
     processor = BatchProcessor(config)
-    
-    # Run batch evaluation
+
     processor.process_random_questions(
         questions_file=args.input_file,
         output_file=args.output_file,
@@ -224,4 +227,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

@@ -7,59 +7,37 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from sentence_transformers import CrossEncoder
 from termcolor import colored
 
-# Load environment variables from .env file
 load_dotenv()
 
 
 class RagConfig:
     def __init__(self):
-        # Core models
         self.embedding_model = "paraphrase-multilingual-MiniLM-L12-v2"
-
-        # Separate models for generation and evaluation
-        self.generation_model_name = (
-            "gemini-2.0-flash-lite"  # Fast model for generation
-        )
-        self.evaluation_model_name = (
-            "gemini-2.5-flash"  # More powerful model for evaluation
-        )
-
-        # Legacy support - will use generation_model_name
+        self.generation_model_name = "gemini-2.0-flash-lite"
+        self.evaluation_model_name = "gemini-2.5-flash"
         self.generative_model_name = self.generation_model_name
-
         self.reranker_model_name = "cross-encoder/ms-marco-MiniLM-L-6-v2"
-
-        # File paths
         self.vector_store_path = "vector_store"
-        self.split_vector_store_path = (
-            "split_vector_store"  # New path for split documents
-        )
+        self.split_vector_store_path = "split_vector_store"
 
-        # Data source URL (Vaccination Manual from AEP)
         self.base_url = "https://vacunasaep.org/documentos/manual/cap-{chapter_number}"
 
-        # Feature flags
         self.use_chapter_filtering: bool = True
         self.use_reranker: bool = True
         self.enable_evaluation: bool = False
         self.debug_mode: bool = False
         self.log_stats: bool = True
-        self.use_text_splitter: bool = (
-            False  # True = use split vector store, False = use original vector store
-        )
+        self.use_text_splitter: bool = True
 
-        # Retrieval parameters
         self.top_k_retrieval: int = 60
         self.top_k_reranked: int = 30
         self.total_chapters: int = 53
 
-        # Text splitter parameters (only used during vector store creation)
-        self.chunk_size: int = 1000  # Size of text chunks in characters
-        self.chunk_overlap: int = 200  # Overlap between chunks in characters
-        self.length_function = len  # Function to measure text length
-        self.separators = ["\n\n", "\n", " ", ""]  # Default separators for splitting
+        self.chunk_size: int = 1000
+        self.chunk_overlap: int = 200
+        self.length_function = len
+        self.separators = ["\n\n", "\n", " ", ""]
 
-        # Initialize all models immediately
         self._initialize_all_models()
 
     def _initialize_all_models(self):
@@ -68,13 +46,10 @@ class RagConfig:
             print(colored("\nModel Initialization", "blue"))
             print(colored("=" * 40, "blue"))
 
-        # Initialize generative model client and models
         self._initialize_generative_models()
 
-        # Initialize embedding model
         self._initialize_embedding_model()
 
-        # Initialize reranker model (always load it, even if disabled)
         self._initialize_reranker_model()
 
         if self.debug_mode:
@@ -97,7 +72,6 @@ class RagConfig:
             if self.debug_mode:
                 print(colored("Generative model client initialized", "blue"))
 
-            # Initialize generation model
             if self.debug_mode:
                 print(
                     colored(
@@ -111,7 +85,6 @@ class RagConfig:
             if self.debug_mode:
                 print(colored("Generation model loaded", "blue"))
 
-            # Initialize evaluation model
             if self.debug_mode:
                 print(
                     colored(
@@ -125,7 +98,6 @@ class RagConfig:
             if self.debug_mode:
                 print(colored("Evaluation model loaded", "blue"))
 
-            # Legacy support
             self.generative_model = self.generation_model
 
         except Exception as e:
@@ -197,7 +169,6 @@ class RagConfig:
         self.enable_evaluation = True
         self.debug_mode = True
         self.log_stats = True
-        # All models are already loaded, just change the flags
 
     def basic_setup(self):
         """Configure for basic operation without advanced features."""
@@ -206,8 +177,7 @@ class RagConfig:
         self.enable_evaluation = False
         self.debug_mode = False
         self.log_stats = True
-        self.top_k_retrieval = 20
-        # All models are already loaded, just change the flags
+        self.top_k_retrieval = 30
 
     def set_retrieval_size(self, retrieval_k: int, reranked_k: int):
         self.top_k_retrieval = retrieval_k
@@ -250,11 +220,11 @@ class RagConfig:
     def set_generation_model(self, model_name: str):
         """Set the generation model to use."""
         self.generation_model_name = model_name
-        self.generative_model_name = model_name  # For backward compatibility
-        # Reinitialize the generation model
+        self.generative_model_name = model_name
+
         try:
             self.generation_model = self.client.models.get(model=model_name)
-            self.generative_model = self.generation_model  # For backward compatibility
+            self.generative_model = self.generation_model
             if self.debug_mode:
                 print(colored(f"Generation model updated to: {model_name}", "green"))
         except Exception as e:
@@ -264,7 +234,7 @@ class RagConfig:
     def set_evaluation_model(self, model_name: str):
         """Set the evaluation model to use."""
         self.evaluation_model_name = model_name
-        # Reinitialize the evaluation model
+
         try:
             self.evaluation_model = self.client.models.get(model=model_name)
             if self.debug_mode:
@@ -278,25 +248,21 @@ class RagConfig:
         print(colored("\nModel Initialization Status", "blue"))
         print(colored("=" * 50, "blue"))
 
-        # Generation model status
         if hasattr(self, "client") and hasattr(self, "generation_model"):
             print(colored(f"✓ Generation model: {self.generation_model_name}", "green"))
         else:
             print(colored("✗ Generation model: Not initialized", "red"))
 
-        # Evaluation model status
         if hasattr(self, "evaluation_model"):
             print(colored(f"✓ Evaluation model: {self.evaluation_model_name}", "green"))
         else:
             print(colored("✗ Evaluation model: Not initialized", "red"))
 
-        # Embedding model status
         if hasattr(self, "embedding_model_instance"):
             print(colored(f"✓ Embedding model: {self.embedding_model}", "green"))
         else:
             print(colored("✗ Embedding model: Not initialized", "red"))
 
-        # Reranker model status
         if hasattr(self, "reranker_model_instance"):
             print(colored(f"✓ Reranker model: {self.reranker_model_name}", "green"))
         else:
@@ -312,13 +278,13 @@ def debug_log(debug_data: dict[str, Any]) -> None:
     if "retrieved_docs" in debug_data:
         docs = debug_data["retrieved_docs"]
         print(f"\n{colored(f'Retrieved Documents ({len(docs)} total):', 'blue')}")
-        for i, doc in enumerate(docs[:6], 1):  # Show first 6 documents
+        for i, doc in enumerate(docs[:6], 1):
             print(f"\n{colored(f'Document #{i}:', 'blue')}")
             print(f"Metadata: {doc.metadata}")
 
             content = doc.page_content
             print("Complete Content:")
-            # Show full content, not truncated
+
             for line in content.split("\n"):
                 if line.strip():
                     print(f"{line}")
@@ -328,13 +294,13 @@ def debug_log(debug_data: dict[str, Any]) -> None:
     if "reranked_docs" in debug_data:
         docs = debug_data["reranked_docs"]
         print(f"\n{colored(f'Reranked Documents ({len(docs)} total):', 'blue')}")
-        for i, doc in enumerate(docs[:5], 1):  # Show first 5 reranked
+        for i, doc in enumerate(docs[:5], 1):
             print(f"\n{colored(f'Document #{i} (after reranking):', 'blue')}")
             print(f"Metadata: {doc.metadata}")
 
             content = doc.page_content
             print("Complete Content:")
-            # Show full content, not truncated
+
             for line in content.split("\n"):
                 if line.strip():
                     print(f"{line}")
@@ -342,7 +308,6 @@ def debug_log(debug_data: dict[str, Any]) -> None:
             print(colored(f"{'-' * 60}", "blue"))
 
     if "evaluation" in debug_data and debug_data["evaluation"]:
-        # Skip evaluation display here as it's already shown in the main pipeline
         pass
 
     print(colored("\n" + "=" * 80, "yellow"))
