@@ -13,10 +13,10 @@ load_dotenv()
 class RagConfig:
     def __init__(self):
         self.embedding_model = "paraphrase-multilingual-MiniLM-L12-v2"
-        self.generation_model_name = "gemini-2.0-flash-lite"
+        self.generation_model_name = "gemini-2.5-flash"
         self.evaluation_model_name = "gemini-2.5-flash"
         self.generative_model_name = self.generation_model_name
-        self.reranker_model_name = "cross-encoder/ms-marco-MiniLM-L-6-v2"
+        self.reranker_model_name = "PlanTL-GOB-ES/roberta-base-biomedical-clinical-es"
         self.vector_store_path = "vector_store"
         self.split_vector_store_path = "split_vector_store"
 
