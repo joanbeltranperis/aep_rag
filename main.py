@@ -15,9 +15,7 @@ def main():
     config.debug_mode = True
     config.log_stats = True
     config.enable_evaluation = True
-    config.use_text_splitter = False
-    config.use_chapter_filtering = True
-
+    config.use_text_splitter = True
 
     pipeline = RAGPipeline(config)
 
