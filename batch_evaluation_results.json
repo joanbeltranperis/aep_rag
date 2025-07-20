@@ -1,0 +1,78 @@
+{
+  "metadata": {
+    "created_at": "2025-07-20T22:38:49.627115",
+    "config": "split_store(1000)+chapter_filtering+reranker+evaluation enabled",
+    "total_questions": 50,
+    "source_file": "questions.json"
+  },
+  "results": [
+    {
+      "original_index": 431,
+      "question": "Paciente que viene de Venezuela con calendario vacunal con 2 dosis de sarampión y rubeola y 1 dosis de parotiditis. Es necesario revacunar con TV por solo 1 dosis de parotiditis? Muchas gracias de antemano.",
+      "human_answer": "Sí, es necesario tener dos dosis de los tres componentes, por lo que precisa una dosis más de triple vírica.\nUn saludo",
+      "rag_answer": "Sí, para un paciente procedente de Venezuela cuyo esquema de vacunación incluye dos dosis de vacuna contra el sarampión y la rubéola (bicomponente SR), se requiere la administración de dos dosis de la vacuna Triple Vírica (sarampión, parotiditis, rubéola).\n\nEl manual establece que si un paciente ha sido vacunado previamente con vacunas monocomponente (sarampión) o bicomponente (sarampión y rubéola), se debe iniciar la vacunación con la triple vírica, prescindiendo de las dosis administradas de forma mono o bicomponente. Por lo tanto, se administrarán 2 dosis de vacuna triple vírica a partir de los 12 meses de edad a estos pacientes, para asegurar una correcta protección frente a las tres enfermedades.\n\nhttps://vacunasaep.org/documentos/manual/cap-11#4-ninos-migrantes-y-adoptados\nhttps://vacunasaep.org/documentos/manual/cap-12#3-recomendaciones\nhttps://vacunasaep.org/documentos/manual/cap-11#3-nino-incorrectamente-inmunizado\nhttps://vacunasaep.org/documentos/manual/cap-7#6-1-calendario-de-vacunaciones-e-inmunizaciones-de-la-asociacion-espanola-de-pediatria-2025",
+      "pipeline_time": 62.17401885986328,
+      "retrieval_time": 25.527936935424805,
+      "reranking_time": 1.0007679462432861,
+      "generation_time": 14.844979047775269,
+      "evaluation_time": 20.793899059295654,
+      "total_time": 62.168508768081665,
+      "context_length": 33653,
+      "documents_retrieved": 60,
+      "documents_reranked": 30,
+      "processed_at": "2025-07-20T22:39:51.801457",
+      "evaluation": {
+        "human_evaluation": {
+          "correctness": 5,
+          "completeness": 3,
+          "relevance": 5,
+          "clarity_and_fluency": 5,
+          "alignment_with_intent": 5,
+          "justification": "La respuesta proporciona la recomendación clínica correcta y directa. Aunque concisa, es precisa y resuelve la duda planteada. Podría ser más completa con una justificación más detallada o referencias."
+        },
+        "rag_evaluation": {
+          "correctness": 1,
+          "completeness": 3,
+          "relevance": 4,
+          "clarity_and_fluency": 5,
+          "alignment_with_intent": 2,
+          "justification": "La respuesta RAG malinterpreta la situación del paciente. Aunque reconoce la necesidad de revacunar, su recomendación de administrar '2 dosis de vacuna triple vírica' y 'prescindir de las dosis administradas de forma mono o bicomponente' es incorrecta, ya que el paciente ya tiene 2 dosis de sarampión y rubéola. Esto resultaría en una sobrevacunación de esos componentes. La acción correcta sería una dosis adicional de triple vírica para completar la parotiditis, no reiniciar el esquema completo. La fluidez y claridad son excelentes, pero el error en la recomendación clínica es significativo."
+        }
+      }
+    },
+    {
+      "original_index": 452,
+      "question": "Buenos días, tengo una chica de 16 años con una 1 dosis de cervarix el 6/8/19 y segunda dosis de gardasil 9 el 14/1/2020 con menos de 6 meses, hay que revacunar o se considera bien inmunizada",
+      "human_answer": "Para la protección del 16 y 18 queda bien vacunada porque hay más de 5 meses de separación entre dosis, pero para los otros 7 genotipos precisaría 2 dosis más separadas, al menos, 3 meses.\nUn cordial saludo",
+      "rag_answer": "El Manual de Inmunizaciones de la AEP establece que la vacunación de rescate frente al virus del papiloma humano (VPH) en personas sanas hasta los 18 años se realiza con una dosis. Sin embargo, la información proporcionada en el manual no contiene directrices específicas que aborden la intercambiabilidad entre la vacuna bivalente (Cervarix) y la nonavalente (Gardasil 9) dentro de una misma pauta de vacunación para el VPH. Tampoco se detalla el intervalo mínimo o adecuado para una pauta de dos dosis de la vacuna frente al VPH en adolescentes, ni se especifica si un intervalo inferior a seis meses entre estas dosis de diferente tipo de vacuna se considera válido o si requiere alguna acción correctora en este contexto. Por lo tanto, con la información disponible, no es posible determinar si la inmunización de la adolescente en las condiciones descritas se considera completa y adecuada.\n\nhttps://vacunasaep.org/documentos/manual/cap-2, 2. Coadministración de las vacunas entre sí y con otros productos biológicos, 5. Edades e intervalos mínimos entre dosis de una misma vacuna. Estrategias correctoras, EXCEPCIONES\nhttps://vacunasaep.org/documentos/manual/cap-7, 7. Calendarios de inmunización en España, 6. Calendario de la Asociación Española de Pediatría, 6.1. Calendario de Vacunaciones e Inmunizaciones de la Asociación Española de Pediatría 2025\nhttps://vacunasaep.org/documentos/manual/cap-42, 42. Virus del papiloma humano, 1. Puntos clave\nhttps://vacunasaep.org/documentos/manual/cap-42, 42. Virus del papiloma humano, 13. Historial de recomendaciones de vacunación, -Comité Asesor de Vacunas de la AEP (CAV-AEP)",
+      "pipeline_time": 83.03182697296143,
+      "retrieval_time": 29.323906183242798,
+      "reranking_time": 1.216766357421875,
+      "generation_time": 22.829328060150146,
+      "evaluation_time": 29.653870105743408,
+      "total_time": 83.02534818649292,
+      "context_length": 36472,
+      "documents_retrieved": 60,
+      "documents_reranked": 30,
+      "processed_at": "2025-07-20T22:41:15.840333",
+      "evaluation": {
+        "human_evaluation": {
+          "correctness": 5,
+          "completeness": 5,
+          "relevance": 5,
+          "clarity_and_fluency": 5,
+          "alignment_with_intent": 5,
+          "justification": "La respuesta humana proporciona una evaluación precisa y clínicamente sensata de la situación. Reconoce la validez de la protección para los genotipos 16 y 18 con el intervalo dado, y de forma crucial, identifica la necesidad de dosis adicionales para lograr la protección completa de los 7 genotipos adicionales cubiertos por Gardasil 9, dado que la paciente tiene 16 años y requiere un esquema de 3 dosis para la cobertura completa de Gardasil 9. La recomendación es clara, concisa y actionable."
+        },
+        "rag_evaluation": {
+          "correctness": 0,
+          "completeness": 0,
+          "relevance": 0,
+          "clarity_and_fluency": 0,
+          "alignment_with_intent": 0,
+          "justification": "La respuesta RAG afirma explícitamente que no puede determinar si la inmunización es completa ('no es posible determinar'). Además, las afirmaciones que hace sobre el Manual de Inmunizaciones de la AEP son incorrectas: el manual SÍ detalla la pauta de vacunación para mayores de 15 años (3 dosis), SÍ aborda la intercambiabilidad de vacunas y SÍ especifica los intervalos mínimos. Por lo tanto, su incapacidad para responder se basa en una premisa falsa, y la información proporcionada no es útil ni tiene mérito. De acuerdo con las instrucciones, si una respuesta admite su incapacidad explícitamente, se puntúa con 0 en todos los criterios."
+        }
+      }
+    }
+  ]
+}

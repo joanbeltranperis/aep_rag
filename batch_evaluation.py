@@ -55,6 +55,7 @@ class BatchProcessor:
 
         random.seed(70)
         selected_indices = random.sample(range(len(all_questions)), num_questions)
+        selected_indices = selected_indices[47:51]
         print(f"Selected indices: {selected_indices}")
 
         results = {
@@ -207,12 +208,13 @@ def main():
     args = parser.parse_args()
 
     config = RagConfig()
-    config.basic_setup()
+    config.enable_all()
 
-    config.enable_evaluation = True
-    config.use_chapter_filtering = True
     config.use_text_splitter = True
+    config.enable_evaluation = True
     config.use_reranker = True
+    config.use_chapter_filtering = True
+    config.debug_mode = False
     config.log_stats = False
 
     processor = BatchProcessor(config)

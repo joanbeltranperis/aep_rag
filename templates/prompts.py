@@ -3,22 +3,17 @@ Eres un asistente experto en recuperación de información médica. Tu tarea tie
 
 1. **ANÁLISIS DE CAPÍTULOS**: Analiza los títulos de documentos y devuelve los números de los 5 capítulos más relevantes para responder la pregunta.
 
-2. **QUERY OPTIMIZADA**: Transforma la pregunta en una consulta optimizada para retrieval vectorial que maximice la recuperación de documentos relevantes. Para esto:
-   - Corrige errores ortográficos y expande abreviaturas
-   - Convierte preguntas en declaraciones afirmativas o frases clave
-   - Incluye sinónimos y términos médicos relacionados
-   - Añade conceptos asociados que puedan aparecer en los documentos
-   - Usa terminología técnica precisa
-   - Elimina palabras interrogativas que raramente aparecen en textos médicos
+2. **REESCRITURA DE PREGUNTA**: Mejora la pregunta del usuario manteniendo su intención original pero haciéndola más clara y efectiva para la búsqueda. Para esto:
+   - Corrige errores ortográficos y gramaticales
+   - Expande abreviaturas y acrónimos médicos
+   - Mantén el formato de pregunta (interrogativo)
+   - Usa terminología médica precisa cuando sea apropiado
+   - Conserva la intención y el contexto original del usuario
    
-Ejemplo:
-- Pregunta: "¿q son los efectos 2arios de la vaxx MMR?"
-- Query optimizada: "efectos secundarios adversos reacciones vacuna MMR sarampión paperas rubéola contraindicaciones precauciones síntomas"
-
 **FORMATO DE RESPUESTA REQUERIDO:**
 ```
 CAPÍTULOS: [números separados por comas, ej: 1,3,5,8,12]
-QUERY_OPTIMIZADA: [consulta optimizada para retrieval vectorial]
+PREGUNTA_REESCRITA: [pregunta mejorada manteniendo formato interrogativo]
 ```
 
 ---
@@ -38,23 +33,21 @@ RESPUESTA:
 """
 
 answer_prompt_template = """
-Eres un asistente médico especializado en vacunas. A continuación tienes una serie de fragmentos extraídos del "Manual de Inmunizaciones de la AEP".
+Eres un asistente médico especializado en vacunas. Tu objetivo es responder con precisión y claridad a la siguiente pregunta, basándote únicamente en la información contenida en el Manual de Inmunizaciones de la AEP.
 
-1. Tu objetivo es responder la pregunta del usuario utilizando únicamente la información contenida en los fragmentos.
-2. Si los fragmentos no contienen suficiente información para responder a la pregunta, indica claramente que no es posible responder con los datos proporcionados.
-3. No aportes información externa a estos fragmentos ni inventes datos no incluidos en ellos.
-4. Al final de la respuesta añade los enlaces del los capítulos del manual que han sido relevantes para elaborar la respuesta.
+1. Si el manual no contiene información suficiente para responder de forma fiable, indícalo claramente.
+2. No incluyas datos externos ni inventados.
+3. Al final de la respuesta, incluye únicamente los enlaces a los capítulos completos del manual que hayan sido relevantes, acompañados del título y, si procede, del subtítulo del apartado utilizado. No añadas encabezados ni explicaciones adicionales.
 
-Pregunta del usuario:
+Pregunta:
 ---------------------
 {question}
 
-Fragmentos recuperados:
------------------------
+Contenido del manual:
+---------------------
 {context}
 
 Respuesta:
-
 """
 
 evaluation_prompt_template = """
