@@ -1,9 +1,25 @@
 initial_retrieval_prompt_template = """
-Eres un asistente experto en recuperación de información. A continuación tienes una lista numerada de títulos de documentos. Después se presenta una pregunta.
+Eres un asistente experto en recuperación de información médica. Tu tarea tiene dos partes:
 
-Tu tarea es analizar los títulos y devolver **el número de los 5**  documentos más relevantes para responder esa pregunta. Devuélvelos en orden de mayor a menor relevancia, separados por comas.
+1. **ANÁLISIS DE CAPÍTULOS**: Analiza los títulos de documentos y devuelve los números de los 5 capítulos más relevantes para responder la pregunta.
 
-No expliques tu razonamiento. No devuelvas los títulos. No incluyas texto adicional. Solo los números.
+2. **QUERY OPTIMIZADA**: Transforma la pregunta en una consulta optimizada para retrieval vectorial que maximice la recuperación de documentos relevantes. Para esto:
+   - Corrige errores ortográficos y expande abreviaturas
+   - Convierte preguntas en declaraciones afirmativas o frases clave
+   - Incluye sinónimos y términos médicos relacionados
+   - Añade conceptos asociados que puedan aparecer en los documentos
+   - Usa terminología técnica precisa
+   - Elimina palabras interrogativas que raramente aparecen en textos médicos
+   
+Ejemplo:
+- Pregunta: "¿q son los efectos 2arios de la vaxx MMR?"
+- Query optimizada: "efectos secundarios adversos reacciones vacuna MMR sarampión paperas rubéola contraindicaciones precauciones síntomas"
+
+**FORMATO DE RESPUESTA REQUERIDO:**
+```
+CAPÍTULOS: [números separados por comas, ej: 1,3,5,8,12]
+QUERY_OPTIMIZADA: [consulta optimizada para retrieval vectorial]
+```
 
 ---
 
@@ -12,7 +28,7 @@ TÍTULOS:
 
 ---
 
-PREGUNTA:  
+PREGUNTA ORIGINAL:  
 {user_question}
 
 ---

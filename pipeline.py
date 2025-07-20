@@ -45,7 +45,7 @@ class RetrievalModule:
 
     def retrieve_documents(
         self, question: str, vector_store: FAISS
-    ) -> tuple[list[Document], float]:
+    ) -> tuple[list[Document], float, str]:
         """Retrieve relevant documents based on the question."""
         start_time = time.time()
 
@@ -53,14 +53,22 @@ class RetrievalModule:
 
         filtered_docs = None
         chapter_filter_time = 0.0
+        optimized_query = question  # Por defecto, usar la pregunta original
 
         if self.config.use_chapter_filtering:
             if self.config.debug_mode and self.config.log_stats:
-                print(colored("Filtering relevant chapters with LLM...", "blue"))
+                print(colored("Filtering relevant chapters and optimizing query with LLM...", "blue"))
 
-            filtered_docs, chapter_filter_time = self._filter_by_chapters(
+            filtered_docs, chapter_filter_time, optimized_query = self._filter_by_chapters_and_optimize_query(
                 question, all_docs
             )
+
+            if self.config.debug_mode and self.config.log_stats:
+                if optimized_query != question:
+                    print(colored(f"Original question: {question}", "yellow"))
+                    print(colored(f"Optimized query: {optimized_query}", "magenta"))
+                else:
+                    print(colored("Query optimization: No changes made", "yellow"))
 
             if filtered_docs:
                 filtered_vector_store = FAISS.from_documents(
@@ -91,9 +99,10 @@ class RetrievalModule:
 
         if self.config.debug_mode and self.config.log_stats:
             print(colored("Performing vector similarity search...", "blue"))
+            print(colored(f"Search query: {optimized_query}", "magenta"))
 
         retrieved_docs = search_store.similarity_search(
-            question, k=self.config.top_k_retrieval
+            optimized_query, k=self.config.top_k_retrieval
         )
 
         retrieval_time = time.time() - start_time
@@ -108,7 +117,7 @@ class RetrievalModule:
             if chapter_filter_time > 0:
                 print(
                     colored(
-                        f"  - Chapter filtering: {chapter_filter_time:.2f}s", "blue"
+                        f"  - Chapter filtering & query optimization: {chapter_filter_time:.2f}s", "blue"
                     )
                 )
                 print(
@@ -118,12 +127,12 @@ class RetrievalModule:
                     )
                 )
 
-        return retrieved_docs, retrieval_time
+        return retrieved_docs, retrieval_time, optimized_query
 
-    def _filter_by_chapters(
+    def _filter_by_chapters_and_optimize_query(
         self, question: str, documents: list[Document]
-    ) -> tuple[list[Document] | None, float]:
-        """Filter documents by relevant chapters using LLM."""
+    ) -> tuple[list[Document] | None, float, str]:
+        """Filter documents by relevant chapters and optimize query using LLM."""
         start_time = time.time()
         try:
             from templates.titles import document_titles
@@ -139,7 +148,8 @@ class RetrievalModule:
             response = self.config.client.models.generate_content(
                 model=self.config.generation_model_name, contents=formatted_prompt
             )
-            chapter_numbers = self._parse_chapter_numbers(response.text)
+            
+            chapter_numbers, optimized_query = self._parse_simple_response(response.text, question)
 
             if self.config.debug_mode and self.config.log_stats:
                 if chapter_numbers:
@@ -170,7 +180,7 @@ class RetrievalModule:
                     print(
                         colored("Chapter filtering failed, using all documents", "red")
                     )
-                return None, time.time() - start_time
+                return None, time.time() - start_time, optimized_query
 
             filtered_docs = [
                 doc
@@ -186,12 +196,48 @@ class RetrievalModule:
                     )
                 )
 
-            return filtered_docs, time.time() - start_time
+            return filtered_docs, time.time() - start_time, optimized_query
 
         except Exception as e:
             if self.config.debug_mode and self.config.log_stats:
-                print(colored(f"Chapter filtering error: {str(e)}", "red"))
-            return None, time.time() - start_time
+                print(colored(f"Chapter filtering & query optimization error: {str(e)}", "red"))
+            return None, time.time() - start_time, question
+
+    def _parse_simple_response(self, response: str, original_question: str) -> tuple[set[str], str]:
+        """Parse simple LLM response containing chapters and optimized query."""
+        try:
+            lines = response.strip().split('\n')
+            chapter_numbers = set()
+            optimized_query = original_question  # Fallback a la pregunta original
+            
+            for line in lines:
+                line = line.strip()
+                
+                # Buscar línea de capítulos
+                if line.startswith('CAPÍTULOS:'):
+                    chapters_text = line.split('CAPÍTULOS:', 1)[1].strip()
+                    # Remover corchetes si existen
+                    chapters_text = chapters_text.strip('[]')
+                    chapter_numbers = self._parse_chapter_numbers(chapters_text)
+                
+                # Buscar línea de query optimizada
+                elif line.startswith('QUERY_OPTIMIZADA:'):
+                    optimized_query = line.split('QUERY_OPTIMIZADA:', 1)[1].strip()
+                    # Remover corchetes si existen
+                    optimized_query = optimized_query.strip('[]')
+                    
+            # Si no encontramos la estructura esperada, intentar parsear como antes
+            if not chapter_numbers:
+                chapter_numbers = self._parse_chapter_numbers(response)
+                
+            return chapter_numbers, optimized_query
+            
+        except Exception as e:
+            # En caso de error, usar el método de parsing original para los capítulos
+            chapter_numbers = self._parse_chapter_numbers(response)
+            return chapter_numbers, original_question
+
+
 
     def _parse_chapter_numbers(self, response: str) -> set[str]:
         """Parse and validate chapter numbers from LLM response."""
@@ -358,7 +404,26 @@ class EvaluationModule:
 
 
 class RAGPipeline:
-    """Main RAG pipeline that orchestrates all components."""
+    """
+    Main RAG pipeline that orchestrates all components.
+    
+    Features:
+    - Document retrieval with optional chapter filtering
+    - Query optimization for maximum retrieval effectiveness
+    - Document reranking with cross-encoder models  
+    - Context preparation and answer generation
+    - Answer evaluation against human responses
+    
+    When chapter filtering is enabled, the pipeline automatically performs
+    query optimization in the same LLM call to transform user questions into
+    optimal search queries by:
+    - Correcting spelling and expanding abbreviations
+    - Converting questions to keyword-rich statements
+    - Adding medical synonyms and related terms
+    - Including concepts likely to appear in documents
+    - Using precise technical terminology
+    - Removing interrogative words that hurt vector search
+    """
 
     def __init__(self, config: RagConfig):
         self.config = config
@@ -393,7 +458,7 @@ class RAGPipeline:
         if self.config.debug_mode:
             print(f"\n{colored('Step 1: Document retrieval', 'blue')}")
 
-        retrieved_docs, retrieval_time = self.retrieval.retrieve_documents(
+        retrieved_docs, retrieval_time, optimized_query = self.retrieval.retrieve_documents(
             question, vector_store
         )
         metrics.retrieval_time = retrieval_time
@@ -403,8 +468,9 @@ class RAGPipeline:
             print(f"\n{colored('Step 2: Document reranking', 'blue')}")
 
         if self.config.use_reranker:
+            # Usar la query optimizada para el reranking también para consistencia
             reranked_docs, reranking_time = self.reranking.rerank_documents(
-                question, retrieved_docs
+                optimized_query, retrieved_docs
             )
         else:
             if self.config.debug_mode:
@@ -433,7 +499,8 @@ class RAGPipeline:
             print(f"\n{colored('Step 4: Answer generation', 'blue')}")
 
         try:
-            answer, generation_time = self.generation.generate_answer(question, context)
+            # Usar la query optimizada para la generación también
+            answer, generation_time = self.generation.generate_answer(optimized_query, context)
             metrics.generation_time = generation_time
 
         except Exception as e:
@@ -450,7 +517,7 @@ class RAGPipeline:
 
         if self.config.enable_evaluation and human_answer:
             evaluation_result, evaluation_time = self.evaluation.evaluate_answer(
-                question, human_answer, answer
+                optimized_query, human_answer, answer
             )
             metrics.evaluation_time = evaluation_time
 
@@ -468,6 +535,7 @@ class RAGPipeline:
 
         debug_data: dict[str, Any] = {
             "question": question,
+            "optimized_query": optimized_query if optimized_query != question else None,
             "retrieved_docs": retrieved_docs,
             "reranked_docs": reranked_docs,
             "context": context,
@@ -479,6 +547,13 @@ class RAGPipeline:
             debug_data["evaluation"] = evaluation_result
 
         if not self.config.debug_mode:
+            # Mostrar si la pregunta fue optimizada, incluso en modo no-debug
+            if optimized_query != question:
+                print(f"\n{colored('Query Optimization Applied:', 'cyan')}")
+                print(colored("=" * 40, "cyan"))
+                print(f"{colored('Original:', 'yellow')} {question}")
+                print(f"{colored('Optimized:', 'magenta')} {optimized_query}")
+
             print(f"\n{colored('Answer:', 'green')}")
             print(colored("=" * 40, "green"))
             print(answer)
@@ -534,6 +609,7 @@ class RAGPipeline:
 
         return {
             "question": question,
+            "optimized_query": optimized_query if optimized_query != question else None,
             "answer": answer,
             "total_time": metrics.total_time,
             "retrieval_time": metrics.retrieval_time,
