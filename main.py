@@ -12,9 +12,9 @@ from utils import load_documents_and_vector_store
 def main():
     config = RagConfig()
     config.enable_all()
-    config.debug_mode = True
-    config.log_stats = True
-    config.enable_evaluation = True
+    config.debug_mode = False
+    config.log_stats = False
+    config.enable_evaluation = False
     config.use_text_splitter = True
 
     pipeline = RAGPipeline(config)
